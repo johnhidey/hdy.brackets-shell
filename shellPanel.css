@@ -1,0 +1,41 @@
+#hdy-commandprompt {
+    padding-bottom: 30px;
+}
+
+.hdy-commandGroups {
+    height: 100%;
+    overflow: auto;
+}
+
+.hdy-command {
+    border-width: 0px;
+    border-style: none;
+    border-color: transparent;
+    margin: 2px 0;
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.hdy-commandResult {
+    margin: 2px 0;
+}
+
+.hdy-command:before {
+    content: attr(data-content-before);
+}
+
+*:focus {
+    outline: 0;
+}
+
+#hdy-shell-icon {
+    background: url(./hdy.brackets.shell.toolbar.png);
+}
+
+pre {
+    display: block;
+    padding-left: 8px;
+    margin: 0 0;
+    background-color: transparent;
+    border: 0px none transparent;
+}
