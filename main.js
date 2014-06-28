@@ -6,7 +6,7 @@ define(function (require, exports, module) {
 
     var AppInit         = brackets.getModule("utils/AppInit"),
         ExtensionUtils  = brackets.getModule("utils/ExtensionUtils"),
-        $icon           = $("<a id='hdy-shell-icon' href='#'> </a>")
+        $icon           = $("<a class='hdy-shell-icon' href='#'> </a>")
                             .attr("title", "Shell")
                             .appendTo($("#main-toolbar .buttons"));
 
@@ -14,7 +14,6 @@ define(function (require, exports, module) {
 
         ExtensionUtils.loadStyleSheet(module, "shellPanel.css");
         var commandShell = require('shellPanel');
-        commandShell.show();
         $icon.on('click', commandShell.toggle);
 
     });

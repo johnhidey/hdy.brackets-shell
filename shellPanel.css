@@ -1,4 +1,4 @@
-#hdy-commandprompt {
+.hdy-brackets-shell {
     padding-bottom: 30px;
 }
 
@@ -7,8 +7,15 @@
     overflow: auto;
 }
 
+.hdy-commandResult pre {
+    border-width: 0;
+    border-style: none;
+    border-color: transparent;
+    background: transparent;
+}
+
 .hdy-command {
-    border-width: 0px;
+    border-width: 0;
     border-style: none;
     border-color: transparent;
     margin: 2px 0;
@@ -24,18 +31,13 @@
     content: attr(data-content-before);
 }
 
-*:focus {
+div:focus {
     outline: 0;
+    border-width: 0;
+    border-style: none;
+    border-color: transparent;
 }
 
-#hdy-shell-icon {
+.hdy-shell-icon {
     background: url(./hdy.brackets.shell.toolbar.png);
-}
-
-pre {
-    display: block;
-    padding-left: 8px;
-    margin: 0 0;
-    background-color: transparent;
-    border: 0px none transparent;
 }
