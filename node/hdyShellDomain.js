@@ -1,3 +1,10 @@
+//         _       __          __    _     __
+//        (_)___  / /_  ____  / /_  (_)___/ /__  __  __
+//       / / __ \/ __ \/ __ \/ __ \/ / __  / _ \/ / / /
+//      / / /_/ / / / / / / / / / / / /_/ /  __/ /_/ /
+//   __/ /\____/_/ /_/_/ /_/_/ /_/_/\__,_/\___/\__, /
+//  /___/                                     /____/
+
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4,
 maxerr: 50, node: true */
 /*global */
@@ -13,10 +20,18 @@ maxerr: 50, node: true */
     * @param {boolean} total If true, return total memory; if false, return free memory only.
     * @return {number} The amount of memory.
     */
-    function _execute(cmd) {
+    function _execute(cmd, cwd) {
 
         shell.config.fatal = false;
-        return shell.exec(cmd);
+
+        shell.cd(cwd);
+        var result = shell.exec(cmd);
+        var newCwd = shell.pwd() || shell.exec('chdir');
+
+        return {
+            data: result,
+            cwd: newCwd
+        };
 
     }
 
@@ -33,13 +48,20 @@ maxerr: 50, node: true */
             "execute", // command name
             _execute, // command handler function
             false, // isAsync
-            "Execute the given command and result the results to the UI",
+            "Execute the given command and return the results to the UI",
             [{
-                name: "cmd", // parameters
+                name: "cmd",
                 type: "string",
-                description: "The command to be executed."
+                description: "The command to be executed"
+            },
+            {
+                name: "cwd", // parameters
+                type: "string",
+                description: "Directory in which the command is executed"
             }]
         );
+
+
     }
 
     exports.init = init;

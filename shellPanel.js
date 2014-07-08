@@ -1,3 +1,11 @@
+//         _       __          __    _     __
+//        (_)___  / /_  ____  / /_  (_)___/ /__  __  __
+//       / / __ \/ __ \/ __ \/ __ \/ / __  / _ \/ / / /
+//      / / /_/ / / / / / / / / / / / /_/ /  __/ /_/ /
+//   __/ /\____/_/ /_/_/ /_/_/ /_/_/\__,_/\___/\__, /
+//  /___/                                     /____/
+
+
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
 /*global define, $, brackets, window, document */
 
@@ -39,15 +47,16 @@ define(function (require, exports, module) {
     function _executeCommand(e) {
 
         var currentCommandGroup = $('.hdy-current'),
-            currentCommand = $('.hdy-command', currentCommandGroup).text();
+            currentCommand = $('.hdy-command', currentCommandGroup).text(),
+            cwd = $('.hdy-command', currentCommandGroup).attr('data-cwd');
 
         if (e.which == KeyEvent.DOM_VK_RETURN) {
             e.preventDefault();
 
             if (currentCommand.trim()) {
-                Shell.execute(currentCommand)
-                    .done(function(data) {
-                        _addShellLine(data.output.trim());
+                Shell.execute(currentCommand, cwd)
+                    .done(function(result) {
+                        _addShellLine(result.cwd.output.trim(), result.data.output.trim());
                     })
                     .fail(function(err) {
                         if (err) {
@@ -62,7 +71,7 @@ define(function (require, exports, module) {
 
     }
 
-    function _addShellLine(data) {
+    function _addShellLine(cwd, data) {
 
         var commandGroups = $('.hdy-commandGroups'),
             currentCommandGroup = $('.hdy-current'),
@@ -84,7 +93,7 @@ define(function (require, exports, module) {
             currentCommand.removeAttr('contenteditable');
         }
 
-        newCommand.attr('data-content-before', _getCommandPrompt());
+        newCommand.attr('data-content-before', (cwd || _getCommandPrompt()) + '>');
         commandGroups.append(newCommandGroup);
 
         _focus();
@@ -95,7 +104,7 @@ define(function (require, exports, module) {
 
         var currentPath = ProjectManager.getProjectRoot().fullPath;
 
-        return currentPath.substring(0, currentPath.length-1) + '>';
+        return currentPath.substring(0, currentPath.length-1);
 
     }
 
@@ -109,7 +118,9 @@ define(function (require, exports, module) {
     AppInit.appReady(function () {
 
         $('.close', ShellPanel.$panel).click(_toggle);
-        $('.hdy-commandGroups').on('keydown', '.hdy-current .hdy-command', _executeCommand);
+        $('.hdy-commandGroups .hdy-current .hdy-command').attr('data-cwd', 'C:\\');
+        $('.hdy-commandGroups')
+            .on('keydown', '.hdy-current .hdy-command', _executeCommand);
 
         _addShellLine();
 
