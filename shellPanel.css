@@ -27,8 +27,8 @@
     margin: 2px 0;
 }
 
-.hdy-command:before {
-    content: attr(data-content-before);
+.hdy-command::before {
+    content: attr(data-cwd);
 }
 
 div:focus {

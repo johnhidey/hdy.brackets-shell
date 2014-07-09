@@ -17,7 +17,10 @@ define(function (require, exports, module) {
 
 
     function _execute(cmd, cwd) {
-        return ShellDomain.exec('execute', cmd, cwd);
+        var result = ShellDomain.exec('execute', cmd, cwd);
+
+
+        return result;
     }
 
     exports.execute = _execute;

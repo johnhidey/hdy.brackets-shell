@@ -1,20 +1,16 @@
 {
-  "name": "hdy.brackets-shell",
-  "title": "Brackets Shell",
-  "description": "Shell access within Brackets",
-  "homepage": "https://github.com/johnhidey/hdy.brackets-shell",
-  "version": "0.0.2",
-  "author": "John Hidey (https://github.com/johnhidey/hdy.brackets-shell)",
-  "license": "MIT",
-  "keywords": [
-    "command",
-    "shell"
-  ],
-  "engines": {
-    "brackets": ">=0.40.0"
-  },
-  "devDependencies": {
-    "karma": "^0.12.16",
-    "karma-brackets": "^0.2.1"
-  }
+    "name": "hdy.brackets-shell",
+    "title": "Brackets Shell",
+    "description": "Shell access within Brackets",
+    "homepage": "https://github.com/johnhidey/hdy.brackets-shell",
+    "version": "0.0.1",
+    "author": "John Hidey (https://github.com/johnhidey/hdy.brackets-shell)",
+    "license": "MIT",
+    "keywords": [
+        "command",
+        "shell"
+    ],
+    "engines": {
+        "brackets": ">=0.40.0"
+    }
 }

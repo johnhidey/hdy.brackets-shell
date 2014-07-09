@@ -22,15 +22,27 @@ maxerr: 50, node: true */
     */
     function _execute(cmd, cwd) {
 
-        shell.config.fatal = false;
+        var output,
+            dir;
 
+        shell.config.fatal = false;
         shell.cd(cwd);
-        var result = shell.exec(cmd);
-        var newCwd = shell.pwd() || shell.exec('chdir');
+        cmd = cmd.trim();
+
+        if (cmd.slice(0, 3).toLowerCase() === 'cd ' ||
+            cmd.slice(0, 3).toLowerCase() === 'cd.') {
+            shell.cd(cmd.substring(2).trim());
+            output = '';
+            dir = process.cwd();
+        }
+        else {
+            output = shell.exec(cmd).output;
+            dir = cwd;
+        }
 
         return {
-            data: result,
-            cwd: newCwd
+            data: output,
+            cwd: dir
         };
 
     }

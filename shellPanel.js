@@ -49,6 +49,7 @@ define(function (require, exports, module) {
         var currentCommandGroup = $('.hdy-current'),
             currentCommand = $('.hdy-command', currentCommandGroup).text(),
             cwd = $('.hdy-command', currentCommandGroup).attr('data-cwd');
+            cwd = cwd.substring(0, cwd.length-1);
 
         if (e.which == KeyEvent.DOM_VK_RETURN) {
             e.preventDefault();
@@ -56,7 +57,7 @@ define(function (require, exports, module) {
             if (currentCommand.trim()) {
                 Shell.execute(currentCommand, cwd)
                     .done(function(result) {
-                        _addShellLine(result.cwd.output.trim(), result.data.output.trim());
+                        _addShellLine(result.cwd.trim(), result.data.trim());
                     })
                     .fail(function(err) {
                         if (err) {
@@ -83,6 +84,7 @@ define(function (require, exports, module) {
 
         if (data) {
             $('pre', currentCommandResult).text(data);
+            newCommand.attr('data-cwd', cwd);
         } else {
             currentCommandResult.html('');
         }
@@ -93,7 +95,7 @@ define(function (require, exports, module) {
             currentCommand.removeAttr('contenteditable');
         }
 
-        newCommand.attr('data-content-before', (cwd || _getCommandPrompt()) + '>');
+        newCommand.attr('data-cwd', (cwd + '>' || _getCommandPrompt()));
         commandGroups.append(newCommandGroup);
 
         _focus();
@@ -103,9 +105,13 @@ define(function (require, exports, module) {
     function _getCommandPrompt() {
 
         var currentPath = ProjectManager.getProjectRoot().fullPath;
+        currentPath = currentPath.substring(0, currentPath.length-1);
 
-        return currentPath.substring(0, currentPath.length-1);
+        if (brackets.platform === "win") {
+            currentPath = currentPath.replace(/\//g, "\\") + '>';
+        }
 
+        return currentPath;
     }
 
     function _focus() {
@@ -117,12 +123,16 @@ define(function (require, exports, module) {
     // Initialize the shellPanel
     AppInit.appReady(function () {
 
+        var cwd = _getCommandPrompt();
+
         $('.close', ShellPanel.$panel).click(_toggle);
-        $('.hdy-commandGroups .hdy-current .hdy-command').attr('data-cwd', 'C:\\');
+        $('.hdy-commandGroups .hdy-current .hdy-command').attr('data-cwd', _getCommandPrompt());
+        cwd = cwd.substring(0, cwd.length-1);
+
         $('.hdy-commandGroups')
             .on('keydown', '.hdy-current .hdy-command', _executeCommand);
 
-        _addShellLine();
+        _addShellLine(cwd);
 
     });
 
