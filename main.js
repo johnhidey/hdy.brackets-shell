@@ -5,7 +5,8 @@
 //   __/ /\____/_/ /_/_/ /_/_/ /_/_/\__,_/\___/\__, /
 //  /___/                                     /____/
 
-/*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
+/*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true,
+         indent: 4, maxerr: 50 */
 /*global define, $, brackets */
 
 define(function (require, exports, module) {
@@ -20,8 +21,8 @@ define(function (require, exports, module) {
     AppInit.appReady(function () {
 
         ExtensionUtils.loadStyleSheet(module, "shellPanel.css");
-        var commandShell = require('shellPanel');
-        $icon.on('click', commandShell.toggle);
+        var commandShell = require("shellPanel");
+        $icon.on("click", commandShell.toggle);
 
     });
 
