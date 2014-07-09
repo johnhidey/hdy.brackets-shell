@@ -6,10 +6,12 @@
 //  /___/                                     /____/
 
 
-/*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
-/*global define, $, brackets, window, document */
+/*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true,
+         indent: 4, maxerr: 50 */
+/*global define, $, brackets */
 
-define(function (require, exports, module) {
+define(function (require, exports) {
+    "use strict";
 
     var PanelManager        = brackets.getModule("view/PanelManager"),
         AppInit             = brackets.getModule("utils/AppInit"),
@@ -17,7 +19,7 @@ define(function (require, exports, module) {
         ProjectManager      = brackets.getModule("project/ProjectManager"),
         ShellPanelHtml      = require("text!shellPanel.html"),
         CommandTemplateHtml = require("text!commandTemplate.html"),
-        Shell               = require('shell'),
+        Shell               = require("shell"),
         ShellPanel          = PanelManager
                             .createBottomPanel("hdy.brackets.shell.panel",
                                                $(ShellPanelHtml), 100);
@@ -46,12 +48,12 @@ define(function (require, exports, module) {
 
     function _executeCommand(e) {
 
-        var currentCommandGroup = $('.hdy-current'),
-            currentCommand = $('.hdy-command', currentCommandGroup).text(),
-            cwd = $('.hdy-command', currentCommandGroup).attr('data-cwd');
+        var currentCommandGroup = $(".hdy-current"),
+            currentCommand = $(".hdy-command", currentCommandGroup).text(),
+            cwd = $(".hdy-command", currentCommandGroup).attr("data-cwd");
             cwd = cwd.substring(0, cwd.length-1);
 
-        if (e.which == KeyEvent.DOM_VK_RETURN) {
+        if (e.which === KeyEvent.DOM_VK_RETURN) {
             e.preventDefault();
 
             if (currentCommand.trim()) {
@@ -74,28 +76,28 @@ define(function (require, exports, module) {
 
     function _addShellLine(cwd, data) {
 
-        var commandGroups = $('.hdy-commandGroups'),
-            currentCommandGroup = $('.hdy-current'),
-            currentCommand = $('.hdy-command', currentCommandGroup),
-            currentCommandResult = $('.hdy-commandResult', currentCommandGroup),
+        var commandGroups = $(".hdy-commandGroups"),
+            currentCommandGroup = $(".hdy-current"),
+            currentCommand = $(".hdy-command", currentCommandGroup),
+            currentCommandResult = $(".hdy-commandResult", currentCommandGroup),
 
             newCommandGroup = $(CommandTemplateHtml),
-            newCommand = $('.hdy-command', newCommandGroup);
+            newCommand = $(".hdy-command", newCommandGroup);
 
         if (data) {
-            $('pre', currentCommandResult).text(data);
-            newCommand.attr('data-cwd', cwd);
+            $("pre", currentCommandResult).text(data);
+            newCommand.attr("data-cwd", cwd);
         } else {
-            currentCommandResult.html('');
+            currentCommandResult.html("");
         }
 
 
         if (currentCommandGroup.length) {
-            currentCommandGroup.removeClass('hdy-current');
-            currentCommand.removeAttr('contenteditable');
+            currentCommandGroup.removeClass("hdy-current");
+            currentCommand.removeAttr("contenteditable");
         }
 
-        newCommand.attr('data-cwd', (cwd + '>' || _getCommandPrompt()));
+        newCommand.attr("data-cwd", (cwd + ">" || _getCommandPrompt()));
         commandGroups.append(newCommandGroup);
 
         _focus();
@@ -108,7 +110,7 @@ define(function (require, exports, module) {
         currentPath = currentPath.substring(0, currentPath.length-1);
 
         if (brackets.platform === "win") {
-            currentPath = currentPath.replace(/\//g, "\\") + '>';
+            currentPath = currentPath.replace(/\//g, "\\") + ">";
         }
 
         return currentPath;
@@ -116,7 +118,7 @@ define(function (require, exports, module) {
 
     function _focus() {
 
-        var commandInput = $('.hdy-current .hdy-command');
+        var commandInput = $(".hdy-current .hdy-command");
         commandInput.focus();
     }
 
@@ -125,12 +127,13 @@ define(function (require, exports, module) {
 
         var cwd = _getCommandPrompt();
 
-        $('.close', ShellPanel.$panel).click(_toggle);
-        $('.hdy-commandGroups .hdy-current .hdy-command').attr('data-cwd', _getCommandPrompt());
+        $(".close", ShellPanel.$panel).click(_toggle);
+        $(".hdy-commandGroups .hdy-current .hdy-command")
+            .attr("data-cwd", _getCommandPrompt());
         cwd = cwd.substring(0, cwd.length-1);
 
-        $('.hdy-commandGroups')
-            .on('keydown', '.hdy-current .hdy-command', _executeCommand);
+        $(".hdy-commandGroups")
+            .on("keydown", ".hdy-current .hdy-command", _executeCommand);
 
         _addShellLine(cwd);
 

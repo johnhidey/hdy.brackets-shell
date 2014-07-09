@@ -7,7 +7,6 @@
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4,
 maxerr: 50, node: true */
-/*global */
 
 (function () {
     "use strict";
@@ -17,7 +16,8 @@ maxerr: 50, node: true */
     /**
     * @private
     * Handler function for the simple.getMemory command.
-    * @param {boolean} total If true, return total memory; if false, return free memory only.
+    * @param {boolean} total If true, return total memory;
+                       if false, return free memory only.
     * @return {number} The amount of memory.
     */
     function _execute(cmd, cwd) {
@@ -29,10 +29,10 @@ maxerr: 50, node: true */
         shell.cd(cwd);
         cmd = cmd.trim();
 
-        if (cmd.slice(0, 3).toLowerCase() === 'cd ' ||
-            cmd.slice(0, 3).toLowerCase() === 'cd.') {
+        if (cmd.slice(0, 3).toLowerCase() === "cd " ||
+            cmd.slice(0, 3).toLowerCase() === "cd.") {
             shell.cd(cmd.substring(2).trim());
-            output = '';
+            output = "";
             dir = process.cwd();
         }
         else {
