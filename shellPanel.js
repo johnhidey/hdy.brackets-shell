@@ -17,8 +17,8 @@ define(function (require, exports, module) {
         AppInit             = brackets.getModule("utils/AppInit"),
         KeyEvent            = brackets.getModule("utils/KeyEvent"),
         ProjectManager      = brackets.getModule("project/ProjectManager"),
-        ShellPanelHtml      = require("text!shellPanel.html"),
-        CommandTemplateHtml = require("text!commandTemplate.html"),
+        ShellPanelHtml      = require("text!templates/shellPanel.html"),
+        CommandTemplateHtml = require("text!templates/commandTemplate.html"),
         ShellPanel          = PanelManager
                                 .createBottomPanel("hdy.brackets.shell.panel",
                                                $(ShellPanelHtml), 100),
@@ -40,10 +40,14 @@ define(function (require, exports, module) {
 
     function _show() {
         ShellPanel.show();
+        $("a.hdy-shell-icon").removeClass("hdy-shell-icon-off");
+        $("a.hdy-shell-icon").addClass("hdy-shell-icon-on");
         _focus();
     }
 
     function _hide() {
+        $("a.hdy-shell-icon").removeClass("hdy-shell-icon-on");
+        $("a.hdy-shell-icon").addClass("hdy-shell-icon-off");
         ShellPanel.hide();
     }
 

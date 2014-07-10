@@ -20,8 +20,9 @@ define(function (require, exports, module) {
 
     AppInit.appReady(function () {
 
-        ExtensionUtils.loadStyleSheet(module, "shellPanel.css");
+        ExtensionUtils.loadStyleSheet(module, "styles/shellPanel.css");
         var commandShell = require("shellPanel");
+        commandShell.hide();
         $icon.on("click", commandShell.toggle);
 
     });
