@@ -6,7 +6,7 @@
 //  /___/                                     /____/
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4,
-maxerr: 50, node: true */
+         maxerr: 50, node: true */
 (function() {
     "use strict";
 
@@ -22,7 +22,7 @@ maxerr: 50, node: true */
     function _execute(cmd, cwd) {
 
         var exec = require("child_process").exec,
-            dir,
+            returndir,
             child;
 
         cmd = cmd.trim();
@@ -34,7 +34,7 @@ maxerr: 50, node: true */
 
             cmd = cmd.substring(2).trim();
             process.cwd(cwd);
-            dir = process.cwd();
+            returndir = process.cwd();
 
         }
 
@@ -49,7 +49,7 @@ maxerr: 50, node: true */
         });
 
         child.on("close", function () {
-            _domainManager.emitEvent("hdyShellDomain", "exit", [dir]);
+            _domainManager.emitEvent("hdyShellDomain", "exit", [returndir]);
         });
 
     }

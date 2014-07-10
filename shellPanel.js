@@ -22,11 +22,12 @@ define(function (require, exports, module) {
         ShellPanel          = PanelManager
                                 .createBottomPanel("hdy.brackets.shell.panel",
                                                $(ShellPanelHtml), 100),
-        ExtensionUtils = brackets.getModule("utils/ExtensionUtils"),
-        NodeDomain = brackets.getModule("utils/NodeDomain"),
-        ShellDomain = new NodeDomain("hdyShellDomain",
+        ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
+        NodeDomain          = brackets.getModule("utils/NodeDomain"),
+        ShellDomain         = new NodeDomain("hdyShellDomain",
                                      ExtensionUtils.getModulePath(module,
-                                                    "node/hdyShellDomain"));
+                                                    "node/hdyShellDomain")),
+        PROMPT_TERMINATOR   = ">";
 
 
     function _toggle() {
@@ -94,7 +95,7 @@ define(function (require, exports, module) {
                                      currentCommandGroup);
 
         if ($("pre", currentCommandResult).length === 0) {
-            currentCommandResult.append($("pre"));
+            currentCommandResult.append($("<pre>"));
         }
 
         $("pre", currentCommandResult).append(document.createTextNode(data));
@@ -116,7 +117,7 @@ define(function (require, exports, module) {
             currentCommand.removeAttr("contenteditable");
         }
 
-        newCommand.attr("data-cwd", (cwd || _getCommandPrompt()) + ">");
+        newCommand.attr("data-cwd", (cwd + PROMPT_TERMINATOR || _getCommandPrompt()));
         commandGroups.append(newCommandGroup);
 
         _focus();
@@ -132,7 +133,7 @@ define(function (require, exports, module) {
             currentPath = currentPath.replace(/\//g, "\\");
         }
 
-        return currentPath + ">";
+        return currentPath + PROMPT_TERMINATOR;
     }
 
     function _focus() {
