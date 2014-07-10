@@ -7,11 +7,10 @@
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4,
 maxerr: 50, node: true */
-
-(function () {
+(function() {
     "use strict";
 
-    var shell = require("shelljs");
+    var _domainManager;
 
     /**
     * @private
@@ -22,28 +21,36 @@ maxerr: 50, node: true */
     */
     function _execute(cmd, cwd) {
 
-        var output,
-            dir;
+        var exec = require("child_process").exec,
+            dir,
+            child;
 
-        shell.config.fatal = false;
-        shell.cd(cwd);
         cmd = cmd.trim();
 
+        // Are we changing directories?  If so we need
+        // to handle that in a special way.
         if (cmd.slice(0, 3).toLowerCase() === "cd " ||
             cmd.slice(0, 3).toLowerCase() === "cd.") {
-            shell.cd(cmd.substring(2).trim());
-            output = "";
+
+            cmd = cmd.substring(2).trim();
+            process.cwd(cwd);
             dir = process.cwd();
-        }
-        else {
-            output = shell.exec(cmd).output;
-            dir = cwd;
+
         }
 
-        return {
-            data: output,
-            cwd: dir
-        };
+        child = exec(cmd, { cwd: cwd });
+
+        child.stdout.on("data", function (data) {
+            _domainManager.emitEvent("hdyShellDomain", "stdout", [data]);
+        });
+
+        child.stderr.on("data", function (data) {
+            _domainManager.emitEvent("hdyShellDomain", "stderr", [data]);
+        });
+
+        child.on("close", function () {
+            _domainManager.emitEvent("hdyShellDomain", "exit", [dir]);
+        });
 
     }
 
@@ -51,12 +58,14 @@ maxerr: 50, node: true */
     * Initializes the test domain with several test commands.
     * @param {DomainManager} domainManager The DomainManager for the server
     */
-    function init(domainManager) {
-        if (!domainManager.hasDomain("hdyShell")) {
-            domainManager.registerDomain("hdyShell", {major: 0, minor: 1});
+    function _init(domainManager) {
+
+        if (!domainManager.hasDomain("hdyShellDomain")) {
+            domainManager.registerDomain("hdyShellDomain", {major: 0, minor: 1});
         }
+
         domainManager.registerCommand(
-            "hdyShell", // domain name
+            "hdyShellDomain", // domain name
             "execute", // command name
             _execute, // command handler function
             false, // isAsync
@@ -67,15 +76,27 @@ maxerr: 50, node: true */
                 description: "The command to be executed"
             },
             {
-                name: "cwd", // parameters
+                name: "cwd",
                 type: "string",
                 description: "Directory in which the command is executed"
             }]
         );
 
+        domainManager.registerEvent("hdyShellDomain",
+                                    "stdout",
+                                    [{name: "data", type: "string"}]);
 
+        domainManager.registerEvent("hdyShellDomain",
+                                    "stderr",
+                                    [{name: "err", type: "string"}]);
+
+        domainManager.registerEvent("hdyShellDomain",
+                                    "exit",
+                                    [{name: "dir", type: "string"}]);
+
+        _domainManager = domainManager;
     }
 
-    exports.init = init;
+    exports.init = _init;
 
 }());

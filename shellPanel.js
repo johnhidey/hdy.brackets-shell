@@ -8,9 +8,9 @@
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true,
          indent: 4, maxerr: 50 */
-/*global define, $, brackets */
+/*global define, $, brackets, document */
 
-define(function (require, exports) {
+define(function (require, exports, module) {
     "use strict";
 
     var PanelManager        = brackets.getModule("view/PanelManager"),
@@ -19,10 +19,15 @@ define(function (require, exports) {
         ProjectManager      = brackets.getModule("project/ProjectManager"),
         ShellPanelHtml      = require("text!shellPanel.html"),
         CommandTemplateHtml = require("text!commandTemplate.html"),
-        Shell               = require("shell"),
         ShellPanel          = PanelManager
-                            .createBottomPanel("hdy.brackets.shell.panel",
-                                               $(ShellPanelHtml), 100);
+                                .createBottomPanel("hdy.brackets.shell.panel",
+                                               $(ShellPanelHtml), 100),
+        ExtensionUtils = brackets.getModule("utils/ExtensionUtils"),
+        NodeDomain = brackets.getModule("utils/NodeDomain"),
+        ShellDomain = new NodeDomain("hdyShellDomain",
+                                     ExtensionUtils.getModulePath(module,
+                                                    "node/hdyShellDomain"));
+
 
     function _toggle() {
         if (ShellPanel.isVisible()) {
@@ -51,53 +56,63 @@ define(function (require, exports) {
         var currentCommandGroup = $(".hdy-current"),
             currentCommand = $(".hdy-command", currentCommandGroup).text(),
             cwd = $(".hdy-command", currentCommandGroup).attr("data-cwd");
-            cwd = cwd.substring(0, cwd.length-1);
 
         if (e.which === KeyEvent.DOM_VK_RETURN) {
             e.preventDefault();
 
+            cwd = cwd.substring(0, cwd.length-1);
             if (currentCommand.trim()) {
-                Shell.execute(currentCommand, cwd)
-                    .done(function(result) {
-                        _addShellLine(result.cwd.trim(), result.data.trim());
-                    })
-                    .fail(function(err) {
-                        if (err) {
-                            _addShellLine(err);
-                            console.error(err);
-                        } else {
-                            _addShellLine();
-                        }
-                    });
-            } else { _addShellLine(); }
+                ShellDomain.exec("execute", currentCommand, cwd);
+            }
+            else {
+                _addShellLine(cwd);
+            }
         }
 
     }
 
-    function _addShellLine(cwd, data) {
+    $(ShellDomain).on("stdout", function(evt, data) {
+        _addShellOutput(data);
+    });
 
-        var commandGroups = $(".hdy-commandGroups"),
+    $(ShellDomain).on("stderr", function(evt, data) {
+        _addShellOutput(data);
+    });
+
+    $(ShellDomain).on("exit", function(evt, dir) {
+        _addShellLine(dir);
+    });
+
+    function _addShellOutput(data) {
+
+        var currentCommandGroup = $(".hdy-current"),
+            currentCommandResult = $(".hdy-command-result",
+                                     currentCommandGroup);
+
+        if ($("pre", currentCommandResult).length === 0) {
+            currentCommandResult.append($("pre"));
+        }
+
+        $("pre", currentCommandResult).append(document.createTextNode(data));
+    }
+
+    function _addShellLine(cwd) {
+
+        var commandGroups = $(".hdy-command-groups"),
             currentCommandGroup = $(".hdy-current"),
             currentCommand = $(".hdy-command", currentCommandGroup),
-            currentCommandResult = $(".hdy-commandResult", currentCommandGroup),
 
             newCommandGroup = $(CommandTemplateHtml),
             newCommand = $(".hdy-command", newCommandGroup);
 
-        if (data) {
-            $("pre", currentCommandResult).text(data);
-            newCommand.attr("data-cwd", cwd);
-        } else {
-            currentCommandResult.html("");
-        }
-
+        newCommand.attr("data-cwd", cwd);
 
         if (currentCommandGroup.length) {
             currentCommandGroup.removeClass("hdy-current");
             currentCommand.removeAttr("contenteditable");
         }
 
-        newCommand.attr("data-cwd", (cwd + ">" || _getCommandPrompt()));
+        newCommand.attr("data-cwd", (cwd || _getCommandPrompt()) + ">");
         commandGroups.append(newCommandGroup);
 
         _focus();
@@ -110,10 +125,10 @@ define(function (require, exports) {
         currentPath = currentPath.substring(0, currentPath.length-1);
 
         if (brackets.platform === "win") {
-            currentPath = currentPath.replace(/\//g, "\\") + ">";
+            currentPath = currentPath.replace(/\//g, "\\");
         }
 
-        return currentPath;
+        return currentPath + ">";
     }
 
     function _focus() {
@@ -128,11 +143,11 @@ define(function (require, exports) {
         var cwd = _getCommandPrompt();
 
         $(".close", ShellPanel.$panel).click(_toggle);
-        $(".hdy-commandGroups .hdy-current .hdy-command")
+        $(".hdy-command-groups .hdy-current .hdy-command")
             .attr("data-cwd", _getCommandPrompt());
         cwd = cwd.substring(0, cwd.length-1);
 
-        $(".hdy-commandGroups")
+        $(".hdy-command-groups")
             .on("keydown", ".hdy-current .hdy-command", _executeCommand);
 
         _addShellLine(cwd);

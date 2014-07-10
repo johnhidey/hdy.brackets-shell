@@ -2,12 +2,12 @@
     padding-bottom: 30px;
 }
 
-.hdy-commandGroups {
+.hdy-command-groups {
     height: 100%;
     overflow: auto;
 }
 
-.hdy-commandResult pre {
+.hdy-command-result pre {
     border-width: 0;
     border-style: none;
     border-color: transparent;
@@ -23,7 +23,7 @@
     font-size: inherit;
 }
 
-.hdy-commandResult {
+.hdy-command-result {
     margin: 2px 0;
 }
 
