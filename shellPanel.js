@@ -8,21 +8,27 @@
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true,
          indent: 4, maxerr: 50 */
-/*global define, $, brackets */
+/*global define, $, brackets, document */
 
-define(function (require, exports) {
+define(function (require, exports, module) {
     "use strict";
 
     var PanelManager        = brackets.getModule("view/PanelManager"),
         AppInit             = brackets.getModule("utils/AppInit"),
         KeyEvent            = brackets.getModule("utils/KeyEvent"),
         ProjectManager      = brackets.getModule("project/ProjectManager"),
-        ShellPanelHtml      = require("text!shellPanel.html"),
-        CommandTemplateHtml = require("text!commandTemplate.html"),
-        Shell               = require("shell"),
+        ShellPanelHtml      = require("text!templates/shellPanel.html"),
+        CommandTemplateHtml = require("text!templates/commandTemplate.html"),
         ShellPanel          = PanelManager
-                            .createBottomPanel("hdy.brackets.shell.panel",
-                                               $(ShellPanelHtml), 100);
+                                .createBottomPanel("hdy.brackets.shell.panel",
+                                               $(ShellPanelHtml), 100),
+        ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
+        NodeDomain          = brackets.getModule("utils/NodeDomain"),
+        ShellDomain         = new NodeDomain("hdyShellDomain",
+                                     ExtensionUtils.getModulePath(module,
+                                                    "node/hdyShellDomain")),
+        PROMPT_TERMINATOR   = ">";
+
 
     function _toggle() {
         if (ShellPanel.isVisible()) {
@@ -35,10 +41,14 @@ define(function (require, exports) {
 
     function _show() {
         ShellPanel.show();
+        $("a.hdy-shell-icon").removeClass("hdy-shell-icon-off");
+        $("a.hdy-shell-icon").addClass("hdy-shell-icon-on");
         _focus();
     }
 
     function _hide() {
+        $("a.hdy-shell-icon").removeClass("hdy-shell-icon-on");
+        $("a.hdy-shell-icon").addClass("hdy-shell-icon-off");
         ShellPanel.hide();
     }
 
@@ -51,69 +61,100 @@ define(function (require, exports) {
         var currentCommandGroup = $(".hdy-current"),
             currentCommand = $(".hdy-command", currentCommandGroup).text(),
             cwd = $(".hdy-command", currentCommandGroup).attr("data-cwd");
-            cwd = cwd.substring(0, cwd.length-1);
 
         if (e.which === KeyEvent.DOM_VK_RETURN) {
             e.preventDefault();
 
+            cwd = cwd.substring(0, cwd.length-1);
             if (currentCommand.trim()) {
-                Shell.execute(currentCommand, cwd)
-                    .done(function(result) {
-                        _addShellLine(result.cwd.trim(), result.data.trim());
-                    })
-                    .fail(function(err) {
-                        if (err) {
-                            _addShellLine(err);
-                            console.error(err);
-                        } else {
-                            _addShellLine();
-                        }
-                    });
-            } else { _addShellLine(); }
+                ShellDomain.exec("execute", currentCommand, cwd, brackets.platform === "win");
+            }
+            else {
+                _addShellLine(cwd);
+            }
         }
 
     }
 
-    function _addShellLine(cwd, data) {
+    $(ShellDomain).on("stdout", function(evt, data) {
+        _addShellOutput(data);
+    });
 
-        var commandGroups = $(".hdy-commandGroups"),
+    $(ShellDomain).on("stderr", function(evt, data) {
+        _addShellOutput(data);
+    });
+
+    $(ShellDomain).on("exit", function(evt, dir) {
+        _addShellLine(dir);
+    });
+
+    $(ShellDomain).on("clear", function() {
+        _clearOutput();
+    });
+
+    function _clearOutput() {
+
+        var commandGroups = $(".hdy-command-groups"),
+            removeCommands = $("div", commandGroups);
+
+        removeCommands.remove();
+
+    }
+
+    function _addShellOutput(data) {
+
+        var currentCommandGroup = $(".hdy-current"),
+            currentCommandResult = $(".hdy-command-result",
+                                     currentCommandGroup);
+
+        if ($("pre", currentCommandResult).length === 0) {
+            currentCommandResult.append($("<pre>"));
+        }
+
+        $("pre", currentCommandResult).append(document.createTextNode(data));
+    }
+
+    function _addShellLine(cwd) {
+
+        var commandGroups = $(".hdy-command-groups"),
             currentCommandGroup = $(".hdy-current"),
             currentCommand = $(".hdy-command", currentCommandGroup),
-            currentCommandResult = $(".hdy-commandResult", currentCommandGroup),
 
             newCommandGroup = $(CommandTemplateHtml),
             newCommand = $(".hdy-command", newCommandGroup);
-
-        if (data) {
-            $("pre", currentCommandResult).text(data);
-            newCommand.attr("data-cwd", cwd);
-        } else {
-            currentCommandResult.html("");
-        }
-
 
         if (currentCommandGroup.length) {
             currentCommandGroup.removeClass("hdy-current");
             currentCommand.removeAttr("contenteditable");
         }
 
-        newCommand.attr("data-cwd", (cwd + ">" || _getCommandPrompt()));
+        newCommand.attr("data-cwd", _getCommandPrompt(cwd));
         commandGroups.append(newCommandGroup);
 
         _focus();
 
     }
 
-    function _getCommandPrompt() {
+    function _getCommandPrompt(cwd) {
 
-        var currentPath = ProjectManager.getProjectRoot().fullPath;
-        currentPath = currentPath.substring(0, currentPath.length-1);
-
-        if (brackets.platform === "win") {
-            currentPath = currentPath.replace(/\//g, "\\") + ">";
+        // remove trailing directory separator if present
+        var projectDir = ProjectManager.getProjectRoot().fullPath;
+        if (projectDir.substr(projectDir.length-1, 1) === "/") {
+            projectDir = projectDir.substring(0, projectDir.length-1);
         }
 
-        return currentPath;
+        // remmove path terminator
+        if (cwd && cwd.substr(cwd.length-1, 1) === PROMPT_TERMINATOR) {
+            cwd = cwd.substring(0, cwd.length-1);
+        }
+
+        var currentPath = cwd || projectDir;
+
+        if (brackets.platform === "win") {
+            currentPath = currentPath.replace(/\//g, "\\");
+        }
+
+        return currentPath + PROMPT_TERMINATOR;
     }
 
     function _focus() {
@@ -128,11 +169,10 @@ define(function (require, exports) {
         var cwd = _getCommandPrompt();
 
         $(".close", ShellPanel.$panel).click(_toggle);
-        $(".hdy-commandGroups .hdy-current .hdy-command")
-            .attr("data-cwd", _getCommandPrompt());
-        cwd = cwd.substring(0, cwd.length-1);
+        $(".hdy-command-groups .hdy-current .hdy-command")
+            .attr("data-cwd", cwd);
 
-        $(".hdy-commandGroups")
+        $(".hdy-command-groups")
             .on("keydown", ".hdy-current .hdy-command", _executeCommand);
 
         _addShellLine(cwd);
