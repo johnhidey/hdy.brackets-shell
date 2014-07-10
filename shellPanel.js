@@ -67,7 +67,7 @@ define(function (require, exports, module) {
 
             cwd = cwd.substring(0, cwd.length-1);
             if (currentCommand.trim()) {
-                ShellDomain.exec("execute", currentCommand, cwd);
+                ShellDomain.exec("execute", currentCommand, cwd, brackets.platform === "win");
             }
             else {
                 _addShellLine(cwd);
@@ -87,6 +87,19 @@ define(function (require, exports, module) {
     $(ShellDomain).on("exit", function(evt, dir) {
         _addShellLine(dir);
     });
+
+    $(ShellDomain).on("clear", function() {
+        _clearOutput();
+    });
+
+    function _clearOutput() {
+
+        var commandGroups = $(".hdy-command-groups"),
+            removeCommands = $("div", commandGroups);
+
+        removeCommands.remove();
+
+    }
 
     function _addShellOutput(data) {
 
@@ -110,24 +123,32 @@ define(function (require, exports, module) {
             newCommandGroup = $(CommandTemplateHtml),
             newCommand = $(".hdy-command", newCommandGroup);
 
-        newCommand.attr("data-cwd", cwd);
-
         if (currentCommandGroup.length) {
             currentCommandGroup.removeClass("hdy-current");
             currentCommand.removeAttr("contenteditable");
         }
 
-        newCommand.attr("data-cwd", (cwd + PROMPT_TERMINATOR || _getCommandPrompt()));
+        newCommand.attr("data-cwd", _getCommandPrompt(cwd));
         commandGroups.append(newCommandGroup);
 
         _focus();
 
     }
 
-    function _getCommandPrompt() {
+    function _getCommandPrompt(cwd) {
 
-        var currentPath = ProjectManager.getProjectRoot().fullPath;
-        currentPath = currentPath.substring(0, currentPath.length-1);
+        // remove trailing directory separator if present
+        var projectDir = ProjectManager.getProjectRoot().fullPath;
+        if (projectDir.substr(projectDir.length-1, 1) === "/") {
+            projectDir = projectDir.substring(0, projectDir.length-1);
+        }
+
+        // remmove path terminator
+        if (cwd && cwd.substr(cwd.length-1, 1) === PROMPT_TERMINATOR) {
+            cwd = cwd.substring(0, cwd.length-1);
+        }
+
+        var currentPath = cwd || projectDir;
 
         if (brackets.platform === "win") {
             currentPath = currentPath.replace(/\//g, "\\");
@@ -149,8 +170,7 @@ define(function (require, exports, module) {
 
         $(".close", ShellPanel.$panel).click(_toggle);
         $(".hdy-command-groups .hdy-current .hdy-command")
-            .attr("data-cwd", _getCommandPrompt());
-        cwd = cwd.substring(0, cwd.length-1);
+            .attr("data-cwd", cwd);
 
         $(".hdy-command-groups")
             .on("keydown", ".hdy-current .hdy-command", _executeCommand);

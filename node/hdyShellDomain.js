@@ -19,10 +19,11 @@
                        if false, return free memory only.
     * @return {number} The amount of memory.
     */
-    function _execute(cmd, cwd) {
+    function _execute(cmd, cwd, isWin) {
 
         var exec = require("child_process").exec,
-            returndir,
+            enddir = cwd,
+            tempdir,
             child;
 
         cmd = cmd.trim();
@@ -32,9 +33,18 @@
         if (cmd.slice(0, 3).toLowerCase() === "cd " ||
             cmd.slice(0, 3).toLowerCase() === "cd.") {
 
-            cmd = cmd.substring(2).trim();
-            process.cwd(cwd);
-            returndir = process.cwd();
+            process.chdir(cwd);
+            tempdir = cmd.substring(2).trim();
+            process.chdir(tempdir);
+            enddir = process.cwd();
+
+        }
+
+        // clearing the console with clear or clr?
+        if ((cmd.toLowerCase() === "clear" && !isWin) ||
+            (cmd.toLowerCase() === "cls" && isWin)) {
+
+            _domainManager.emitEvent("hdyShellDomain", "clear");
 
         }
 
@@ -49,7 +59,7 @@
         });
 
         child.on("close", function () {
-            _domainManager.emitEvent("hdyShellDomain", "exit", [returndir]);
+            _domainManager.emitEvent("hdyShellDomain", "exit", [enddir]);
         });
 
     }
@@ -79,6 +89,11 @@
                 name: "cwd",
                 type: "string",
                 description: "Directory in which the command is executed"
+            },
+            {
+                name: "isWin",
+                type: "Boolean",
+                description: "Is Windows System ?"
             }]
         );
 
@@ -92,7 +107,10 @@
 
         domainManager.registerEvent("hdyShellDomain",
                                     "exit",
-                                    [{name: "dir", type: "string"}]);
+                                    [{name: "enddir", type: "string"}]);
+
+        domainManager.registerEvent("hdyShellDomain",
+                                    "clear");
 
         _domainManager = domainManager;
     }
