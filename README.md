@@ -10,4 +10,4 @@ License
 =======
 MIT
 
-[screenshot]: https://github.com/johnhidey/hdy.resources/blob/master/hdy.brackets-shell/images/Screenshot.PNG
+[screenshot]: https://raw.githubusercontent.com/johnhidey/hdy.resources/master/hdy.brackets-shell/images/Screenshot.PNG
