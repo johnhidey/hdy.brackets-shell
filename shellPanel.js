@@ -8,7 +8,7 @@
 
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true,
          indent: 4, maxerr: 50 */
-/*global define, $, brackets, document */
+/*global define, $, brackets, document, window */
 
 define(function (require, exports, module) {
     "use strict";
@@ -27,7 +27,9 @@ define(function (require, exports, module) {
         ShellDomain         = new NodeDomain("hdyShellDomain",
                                      ExtensionUtils.getModulePath(module,
                                                     "node/hdyShellDomain")),
-        PROMPT_TERMINATOR   = ">";
+        PROMPT_TERMINATOR   = ">",
+        CommandRoll         = [],
+        CommandRollIndex    = -1;
 
 
     function _toggle() {
@@ -67,12 +69,66 @@ define(function (require, exports, module) {
 
             cwd = cwd.substring(0, cwd.length-1);
             if (currentCommand.trim()) {
-                ShellDomain.exec("execute", currentCommand, cwd, brackets.platform === "win");
+                ShellDomain.exec("execute",
+                                 currentCommand,
+                                 cwd,
+                                 brackets.platform === "win");
+
+                CommandRoll.push(currentCommand);
+                console.info(CommandRoll);
             }
             else {
                 _addShellLine(cwd);
             }
         }
+
+    }
+
+    function _rollCommand(e) {
+
+        var element = $(this);
+
+        if (e.which === KeyEvent.DOM_VK_UP) {
+            e.preventDefault();
+
+            if (CommandRoll.length < 1) {
+                return;
+            }
+
+            CommandRollIndex++;
+
+            if (CommandRollIndex > CommandRoll.length - 1) {
+                CommandRollIndex = 0;
+            }
+
+            _updateCommandLine(CommandRoll[CommandRollIndex]);
+            _setCursorToEnd(element[0]);
+        }
+
+        if (e.which === KeyEvent.DOM_VK_DOWN) {
+            e.preventDefault();
+
+            if (CommandRoll.length < 1) {
+                return;
+            }
+
+            CommandRollIndex--;
+
+            if (CommandRollIndex < 0) {
+                CommandRollIndex = CommandRoll.length - 1;
+            }
+
+            _updateCommandLine(CommandRoll[CommandRollIndex]);
+            _setCursorToEnd(element[0]);
+        }
+    }
+
+    function _updateCommandLine(cmd) {
+
+        var currentCommandGroup = $(".hdy-current"),
+            currentCommand = $(".hdy-command", currentCommandGroup);
+
+            currentCommand.text(cmd);
 
     }
 
@@ -91,6 +147,7 @@ define(function (require, exports, module) {
     $(ShellDomain).on("clear", function() {
         _clearOutput();
     });
+
 
     function _clearOutput() {
 
@@ -175,9 +232,25 @@ define(function (require, exports, module) {
         $(".hdy-command-groups")
             .on("keydown", ".hdy-current .hdy-command", _executeCommand);
 
+        $(".hdy-command-groups")
+            .on("keydown", ".hdy-current .hdy-command", _rollCommand);
+
         _addShellLine(cwd);
 
     });
+
+    function _setCursorToEnd(contentEditableElement)
+    {
+        var range,selection;
+
+        range = document.createRange();//Create a range (a range is a like the selection but invisible)
+        range.selectNodeContents(contentEditableElement);//Select the entire contents of the element with the range
+        range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+        selection = window.getSelection();//get the selection object (allows you to change selection)
+        selection.removeAllRanges();//remove any selections already made
+        selection.addRange(range);//make the range you have just created the visible selection
+
+    }
 
     exports.toggle = _toggle;
     exports.hide = _hide;
