@@ -1,3 +1,6 @@
+### v0.0.3
+* Added support for command rolling
+
 ### v0.0.2
 * Long running process support
 * Removed dependency on ShellJS
