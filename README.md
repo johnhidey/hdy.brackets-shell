@@ -4,7 +4,7 @@ A brackets extension giving you access to the system shell within brackets.
 
 Screenshots
 ==========
-![](screenshot)  
+![][screenshot]
 
 License
 =======
