@@ -3,7 +3,7 @@
     "title": "Brackets Shell",
     "description": "Shell access within Brackets",
     "homepage": "https://github.com/johnhidey/hdy.brackets-shell",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "author": "John Hidey (https://github.com/johnhidey/hdy.brackets-shell)",
     "license": "MIT",
     "keywords": [
