@@ -9,6 +9,6 @@ A brackets extension giving you access to the system shell within brackets.
 Please see [`CHANGELOG.md`](CHANGELOG.md)
 
 ##License
-MIT. Please see [`LICENSE.md`](LICENSE.md)
+MIT. Please see [`LICENSE`](LICENSE)
 
 [screenshot]: https://raw.githubusercontent.com/johnhidey/hdy.resources/master/hdy.brackets-shell/images/Screenshot.PNG
