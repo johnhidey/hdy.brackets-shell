@@ -33,10 +33,13 @@
         if (cmd.slice(0, 3).toLowerCase() === "cd " ||
             cmd.slice(0, 3).toLowerCase() === "cd.") {
 
-            process.chdir(cwd);
-            tempdir = cmd.substring(2).trim();
-            process.chdir(tempdir);
-            enddir = process.cwd();
+            try {
+                process.chdir(cwd);
+                tempdir = cmd.substring(2).trim();
+                process.chdir(tempdir);
+                enddir = process.cwd();
+            }
+            catch (e) {}
 
         }
 

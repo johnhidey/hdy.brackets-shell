@@ -137,7 +137,7 @@ define(function (require, exports, module) {
     });
 
     $(ShellDomain).on("stderr", function(evt, data) {
-        _addShellOutput(data);
+        _addShellOutput(data, 'hdy-error');
     });
 
     $(ShellDomain).on("exit", function(evt, dir) {
@@ -158,7 +158,7 @@ define(function (require, exports, module) {
 
     }
 
-    function _addShellOutput(data) {
+    function _addShellOutput(data, color) {
 
         var currentCommandGroup = $(".hdy-current"),
             currentCommandResult = $(".hdy-command-result",
@@ -168,6 +168,9 @@ define(function (require, exports, module) {
             currentCommandResult.append($("<pre>"));
         }
 
+        if (color) {
+            $("pre", currentCommandResult).addClass('hdy-error');
+        }
         $("pre", currentCommandResult).append(document.createTextNode(data));
     }
 
