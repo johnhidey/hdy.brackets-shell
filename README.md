@@ -2,12 +2,13 @@ hdy.Brackets-Shell
 ==================
 A brackets extension giving you access to the system shell within brackets.
 
-Screenshots
-==========
+##Screenshots
 ![][screenshot]
 
-License
-=======
+##Change Log
+Change Log is located <a href="https://github.com/johnhidey/hdy.brackets-shell/changelog.md">here</a>.
+
+##License
 MIT
 
 [screenshot]: https://raw.githubusercontent.com/johnhidey/hdy.resources/master/hdy.brackets-shell/images/Screenshot.PNG
