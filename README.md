@@ -6,9 +6,9 @@ A brackets extension giving you access to the system shell within brackets.
 ![][screenshot]
 
 ##Change Log
-Change Log is located <a href="https://github.com/johnhidey/hdy.brackets-shell/blob/master/CHANGELOG.md">here</a>.
+Please see [`CHANGELOG.md`](CHANGELOG.md)
 
 ##License
-MIT
+MIT. Please see [`LICENSE.md`](LICENSE.md)
 
 [screenshot]: https://raw.githubusercontent.com/johnhidey/hdy.resources/master/hdy.brackets-shell/images/Screenshot.PNG
