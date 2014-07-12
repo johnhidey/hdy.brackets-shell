@@ -6,7 +6,7 @@ A brackets extension giving you access to the system shell within brackets.
 ![][screenshot]
 
 ##Change Log
-Change Log is located <a href="https://github.com/johnhidey/hdy.brackets-shell/changelog.md">here</a>.
+Change Log is located <a href="https://github.com/johnhidey/hdy.brackets-shell/blob/master/CHANGELOG.md">here</a>.
 
 ##License
 MIT
