@@ -51,6 +51,9 @@ div:focus {
     background: url(../images/hdy.brackets.shell.toolbar.on.png);
 }
 
+.hdy-dark-theme {
+    color:#AAAAAA;
+}
 
 .hdy-red {
     color:rgb(170, 0, 0);

@@ -31,6 +31,9 @@ define(function (require, exports, module) {
         CommandRoll         = [],
         CommandRollIndex    = -1,
         ansiFormat = require("shellAnsiFormat");
+    
+    var PreferencesManager = brackets.getModule("preferences/PreferencesManager"),
+        prefs = PreferencesManager.getExtensionPrefs("hdy.brackets-shell");
 
 
     function _toggle() {
@@ -172,7 +175,11 @@ define(function (require, exports, module) {
         if (color) {
             $("pre", currentCommandResult).addClass('hdy-error');
         }
-
+        
+        if (prefs.get("dark")) {
+            $("pre", currentCommandResult).addClass('hdy-dark-theme');
+        }
+        
         if(ansiFormat.hasAceptedAnsiFormat(data)){
             ansiFormat.formattedText(data, currentCommandResult);
         } else {

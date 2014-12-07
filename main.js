@@ -17,6 +17,16 @@ define(function (require, exports, module) {
         $icon           = $("<a class='hdy-shell-icon' href='#'> </a>")
                             .attr("title", "Shell")
                             .appendTo($("#main-toolbar .buttons"));
+    
+    var PreferencesManager = brackets.getModule("preferences/PreferencesManager"),
+        prefs = PreferencesManager.getExtensionPrefs("hdy.brackets-shell"),
+        stateManager = PreferencesManager.stateManager.getPrefixedSystem("hdy.brackets-shell");
+    
+    if(prefs.get("dark") === undefined) {
+        prefs.definePreference("dark", "boolean", false);
+        prefs.set("dark", false);
+        prefs.save();
+    }
 
     AppInit.appReady(function () {
 
