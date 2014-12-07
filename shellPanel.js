@@ -29,7 +29,8 @@ define(function (require, exports, module) {
                                                     "node/hdyShellDomain")),
         PROMPT_TERMINATOR   = ">",
         CommandRoll         = [],
-        CommandRollIndex    = -1;
+        CommandRollIndex    = -1,
+        ansiFormat = require("shellAnsiFormat");
 
 
     function _toggle() {
@@ -165,15 +166,20 @@ define(function (require, exports, module) {
                                      currentCommandGroup);
 
         if ($("pre", currentCommandResult).length === 0) {
-            currentCommandResult.append($("<pre>"));
+            currentCommandResult.append($("<pre>1"));
         }
 
         if (color) {
             $("pre", currentCommandResult).addClass('hdy-error');
         }
-        $("pre", currentCommandResult).append(document.createTextNode(data));
-    }
 
+        if(ansiFormat.hasAceptedAnsiFormat(data)){
+            ansiFormat.formattedText(data, currentCommandResult);
+        } else {
+            $("pre", currentCommandResult).append(document.createTextNode(data));
+        }
+    }
+  
     function _addShellLine(cwd) {
 
         var commandGroups = $(".hdy-command-groups"),
