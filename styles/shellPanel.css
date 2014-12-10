@@ -50,3 +50,77 @@ div:focus {
 .hdy-shell-icon-on {
     background: url(../images/hdy.brackets.shell.toolbar.on.png);
 }
+
+.hdy-dark-theme {
+    color:#AAAAAA;
+}
+
+.hdy-red {
+    color:rgb(170, 0, 0);
+}
+.hdy-yellow {
+    color:rgb(170, 170, 0);
+}
+
+.hdy-black {
+    color:rgb(0, 0, 0);
+}
+
+.hdy-green {
+    color:rgb(0, 170, 0);
+}
+
+.hdy-blue {
+    color:rgb(0, 0, 170);
+}
+
+.hdy-magenta {
+    color:rgb(170, 0, 170);
+}
+
+.hdy-cyan {
+    color:rgb(0, 170, 128);
+}
+
+.hdy-white {
+    color:rgb(255, 255, 255);
+}
+
+.hdy-default {
+    color:#AAAAAA;
+}
+
+.hdy-bgr-red {
+    background-color:rgb(170, 0, 0);
+}
+.hdy-bgr-yellow {
+    background-color:rgb(170, 170, 0);
+}
+
+.hdy-bgr-black {
+    background-color:rgb(0, 0, 0);
+}
+
+.hdy-bgr-green {
+    background-color:rgb(0, 170, 0);
+}
+
+.hdy-bgr-blue {
+    background-color:rgb(0, 0, 170);
+}
+
+.hdy-bgr-magenta {
+    background-color:rgb(170, 0, 170);
+}
+
+.hdy-bgr-cyan {
+    background-color:rgb(0, 170, 128);
+}
+
+.hdy-bgr-white {
+    background-color:rgb(255, 255, 255);
+}
+
+.hdy-bgr-default {
+    background-color:#AAAAAA;
+}
