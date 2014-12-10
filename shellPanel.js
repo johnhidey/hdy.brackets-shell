@@ -140,7 +140,7 @@ define(function (require, exports, module) {
         _addShellOutput(data, 'hdy-error');
     });
 
-    $(ShellDomain).on("exit", function(evt, dir) {
+    $(ShellDomain).on("close", function(evt, dir) {
         _addShellLine(dir);
     });
 
