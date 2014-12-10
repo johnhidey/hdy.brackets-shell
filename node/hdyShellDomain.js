@@ -5,12 +5,13 @@
 //   __/ /\____/_/ /_/_/ /_/_/ /_/_/\__,_/\___/\__, /
 //  /___/                                     /____/
 
-/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4,
-         maxerr: 50, node: true */
+/* globals require, process, exports */
 (function() {
     "use strict";
 
-    var _domainManager;
+    var _domainManager,
+        child,
+        kill = require("tree-kill");
 
     /**
     * @private
@@ -21,10 +22,11 @@
     */
     function _execute(cmd, cwd, isWin) {
 
-        var exec = require("child_process").exec,
+        var spawn = require('child_process').spawn,
+            splitarps = require('splitargs'),
+            args,
             enddir = cwd,
-            tempdir,
-            child;
+            tempdir;
 
         cmd = cmd.trim();
 
@@ -48,22 +50,52 @@
             (cmd.toLowerCase() === "cls" && isWin)) {
 
             _domainManager.emitEvent("hdyShellDomain", "clear");
-
         }
 
-        child = exec(cmd, { cwd: cwd });
+        args = splitarps(cmd);
+        if (args.length === 0) {
+            args = [];
+        }
+
+        if (isWin) {
+            cmd = 'cmd.exe';
+            args.unshift('/c');
+        }
+        else {
+            cmd = 'sh';
+            args.unshift('-c');
+        }
+
+        child = spawn(cmd, args, { cwd: cwd, env: process.env });
 
         child.stdout.on("data", function (data) {
-            _domainManager.emitEvent("hdyShellDomain", "stdout", [data]);
+            _domainManager.emitEvent("hdyShellDomain", "stdout", [data.toString()]);
         });
 
         child.stderr.on("data", function (data) {
-            _domainManager.emitEvent("hdyShellDomain", "stderr", [data]);
+            _domainManager.emitEvent("hdyShellDomain", "stderr", [data.toString()]);
         });
 
         child.on("close", function () {
-            _domainManager.emitEvent("hdyShellDomain", "exit", [enddir]);
+            child.kill();
+            _domainManager.emitEvent("hdyShellDomain", "close", [enddir]);
         });
+
+    }
+
+    function _kill() {
+
+        //SIGKILL, SIGTERM, SIGABRT, SIGHUP, SIGINT and SIGQUIT
+        if (child && child.pid) {
+            kill(child.pid);
+        }
+    }
+
+    function _detach() {
+
+        if (child) {
+            child.disconnect();
+        }
 
     }
 
@@ -79,9 +111,27 @@
 
         domainManager.registerCommand(
             "hdyShellDomain", // domain name
+            "kill", // command name
+            _kill, // command handler function
+            true, // isAsync
+            "Kill the current executing process",
+            []
+        );
+
+        domainManager.registerCommand(
+            "hdyShellDomain", // domain name
+            "detach", // command name
+            _detach, // command handler function
+            true, // isAsync
+            "Detach current running process from brackets shell",
+            []
+        );
+
+        domainManager.registerCommand(
+            "hdyShellDomain", // domain name
             "execute", // command name
             _execute, // command handler function
-            false, // isAsync
+            true, // isAsync
             "Execute the given command and return the results to the UI",
             [{
                 name: "cmd",
@@ -109,11 +159,12 @@
                                     [{name: "err", type: "string"}]);
 
         domainManager.registerEvent("hdyShellDomain",
-                                    "exit",
+                                    "close",
                                     [{name: "enddir", type: "string"}]);
 
         domainManager.registerEvent("hdyShellDomain",
-                                    "clear");
+                                    "clear",
+                                    []);
 
         _domainManager = domainManager;
     }

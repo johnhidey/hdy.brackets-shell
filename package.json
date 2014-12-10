@@ -1,16 +1,34 @@
 {
-    "name": "hdy.brackets-shell",
-    "title": "Brackets Shell",
-    "description": "Shell access within Brackets",
-    "homepage": "https://github.com/johnhidey/hdy.brackets-shell",
-    "version": "0.0.4",
-    "author": "John Hidey (https://github.com/johnhidey/hdy.brackets-shell)",
-    "license": "MIT",
-    "keywords": [
-        "command",
-        "shell"
-    ],
-    "engines": {
-        "brackets": ">=0.40.0"
-    }
+  "name": "hdy.brackets-shell",
+  "title": "Brackets Shell",
+  "version": "0.0.4",
+  "description": "Shell access within Brackets",
+  "homepage": "http://john.hidey.com/hdy.brackets-shell/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnhidey/hdy.brackets-shell"
+  },
+  "author": "John Hidey (https://github.com/johnhidey/)",
+  "issues": {
+    "url": "https://github.com/johnhidey/hdy.brackets-shell/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "command",
+    "shell"
+  ],
+  "engines": {
+    "brackets": ">=0.40.0"
+  },
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "grunt": "^0.4.5",
+    "grunt-contrib-compress": "^0.12.0",
+    "grunt-contrib-copy": "^0.7.0",
+    "mocha": "^2.0.1"
+  },
+  "dependencies": {
+    "splitargs": "^0.0.3",
+    "tree-kill": "^0.0.6"
+  }
 }

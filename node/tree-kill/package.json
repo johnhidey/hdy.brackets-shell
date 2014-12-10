@@ -1,0 +1,44 @@
+{
+  "name": "tree-kill",
+  "version": "0.0.6",
+  "description": "kill trees of processes",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pkrumins/node-tree-kill.git"
+  },
+  "homepage": "https://github.com/pkrumins/node-tree-kill",
+  "dependencies": {
+    "once": "1.1.1"
+  },
+  "keywords": [
+    "tree",
+    "trees",
+    "process",
+    "processes",
+    "kill",
+    "signal"
+  ],
+  "author": {
+    "name": "Peteris Krumins",
+    "email": "peteris.krumins@gmail.com",
+    "url": "http://www.catonmat.net"
+  },
+  "contributors": [
+    {
+      "name": "Todd Wolfson",
+      "email": "todd@twolfson.com",
+      "url": "http://twolfson.com/"
+    }
+  ],
+  "license": "MIT",
+  "readme": "Tree Kill\n=========\n\nKill all processes in the process tree, including the root process.\n\nExample\n=======\n\n```js\nvar kill = require('tree-kill');\nkill(1, 'SIGKILL');\n```\n\nIn this example we kill all the children processes of the process with pid `1`, including the process with pid `1` itself.\n\nMethods\n=======\n\n## require('tree-kill')(pid, [signal]);\n\nSends signal `signal` to all children processes of the process with pid `pid`, including `pid`. Signal defaults to `SIGTERM`.\n\nFor Linux, this uses `ps -o pid --no-headers --ppid PID` to find the parent pids of `PID`.\n\nFor Windows, this uses `'taskkill /pid PID /T /F'` to kill the process tree.\n\nInstall\n=======\n\nWith [npm](https://npmjs.org) do:\n\n```\nnpm install tree-kill\n```\n\nLicense\n=======\n\nMIT\n",
+  "readmeFilename": "readme.markdown",
+  "bugs": {
+    "url": "https://github.com/pkrumins/node-tree-kill/issues"
+  },
+  "_id": "tree-kill@0.0.6",
+  "_shasum": "8f56c254fa50ce55750898ab3fb5a4d2ac01472f",
+  "_from": "tree-kill@",
+  "_resolved": "https://registry.npmjs.org/tree-kill/-/tree-kill-0.0.6.tgz"
+}
