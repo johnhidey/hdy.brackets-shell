@@ -1,11 +1,5 @@
-//         _       __          __    _     __
-//        (_)___  / /_  ____  / /_  (_)___/ /__  __  __
-//       / / __ \/ __ \/ __ \/ __ \/ / __  / _ \/ / / /
-//      / / /_/ / / / / / / / / / / / /_/ /  __/ /_/ /
-//   __/ /\____/_/ /_/_/ /_/_/ /_/_/\__,_/\___/\__, /
-//  /___/                                     /____/
-
 /* globals require, process, exports */
+
 (function() {
     "use strict";
 
@@ -22,8 +16,8 @@
     */
     function _execute(cmd, cwd, isWin) {
 
-        var spawn = require('child_process').spawn,
-            splitarps = require('splitargs'),
+        var spawn = require("child_process").spawn,
+            splitarps = require("splitargs"),
             args,
             enddir = cwd,
             tempdir;
@@ -32,8 +26,7 @@
 
         // Are we changing directories?  If so we need
         // to handle that in a special way.
-        if (cmd.slice(0, 3).toLowerCase() === "cd " ||
-            cmd.slice(0, 3).toLowerCase() === "cd.") {
+        if (cmd.slice(0, 3).toLowerCase() === "cd ") {
 
             try {
                 process.chdir(cwd);
@@ -58,12 +51,12 @@
         }
 
         if (isWin) {
-            cmd = 'cmd.exe';
-            args.unshift('/c');
+            cmd = "cmd.exe";
+            args.unshift("/c");
         }
         else {
-            cmd = 'sh';
-            args.unshift('-c');
+            cmd = "sh";
+            args.unshift("-c");
         }
 
         child = spawn(cmd, args, { cwd: cwd, env: process.env });

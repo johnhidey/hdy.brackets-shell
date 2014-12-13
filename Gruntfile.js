@@ -1,23 +1,24 @@
 /* globals module */
+
 module.exports = function(grunt) {
 
   // Project configuration.
     grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
+        pkg: grunt.file.readJSON("package.json"),
         compress: {
             main: {
                 options: {
-                    archive: 'build/<%= pkg.name %>-<%= pkg.version %>.zip',
-                    mode: 'zip'
+                    archive: "build/<%= pkg.name %>-<%= pkg.version %>.zip",
+                    mode: "zip"
                 },
                 expand: true,
-                src: ['**/*',
-                    '!build/**',
-                    '!node_modules/**',
-                    '!tests/**',
-                    '!Gruntfile.js'
+                src: ["**/*",
+                    "!build/**",
+                    "!node_modules/**",
+                    "!tests/**",
+                    "!Gruntfile.js"
                 ],
-                dest: '/'
+                dest: "/"
             }
         },
         copy: {
@@ -25,17 +26,17 @@ module.exports = function(grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: 'node_modules/splitargs/',
-                        src: ['**/*'],
-                        dest: 'node/node_modules/splitargs/',
-                        filter: 'isFile'
+                        cwd: "node_modules/splitargs/",
+                        src: ["**/*"],
+                        dest: "node/node_modules/splitargs/",
+                        filter: "isFile"
                     },
                     {
                         expand: true,
-                        cwd: 'node_modules/tree-kill/',
-                        src: ['**/*'],
-                        dest: 'node/node_modules/tree-kill/',
-                        filter: 'isFile'
+                        cwd: "node_modules/tree-kill/",
+                        src: ["**/*"],
+                        dest: "node/node_modules/tree-kill/",
+                        filter: "isFile"
                     }
                 ]
             }
@@ -43,10 +44,10 @@ module.exports = function(grunt) {
     });
 
     // Load the plugin that provides the "compress" task.
-    grunt.loadNpmTasks('grunt-contrib-compress');
-    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks("grunt-contrib-compress");
+    grunt.loadNpmTasks("grunt-contrib-copy");
 
     // Default task(s).
-    grunt.registerTask('default', ['copy']);
+    grunt.registerTask("default", ["copy"]);
 
 };

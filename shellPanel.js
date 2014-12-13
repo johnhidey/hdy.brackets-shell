@@ -5,15 +5,13 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var PanelManager        = brackets.getModule("view/PanelManager"),
-        AppInit             = brackets.getModule("utils/AppInit"),
+    var WorkspaceManager       = brackets.getModule("view/WorkspaceManager"),
+        AppInit            = brackets.getModule("utils/AppInit"),
         KeyEvent            = brackets.getModule("utils/KeyEvent"),
-        ShellPanelHtml      = require("text!templates/shellPanel.html"),
-        PROMPT_TERMINATOR   = ">",
-        CommandTemplateHtml = require("text!templates/commandTemplate.html"),
-        ShellPanel          = PanelManager
-                                .createBottomPanel("hdy.brackets.shell.panel",
-                                               $(ShellPanelHtml), 100),
+        _shellPanelHtml      = require("text!templates/shellPanel.html"),
+        $commandTemplateHtml = $(require("text!templates/commandTemplate.html")),
+        ShellPanel          = WorkspaceManager.createBottomPanel("hdy.brackets.shell.panel",
+                                                            $(_shellPanelHtml), 100),
         ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
         NodeDomain          = brackets.getModule("utils/NodeDomain"),
         ShellDomain         = new NodeDomain("hdyShellDomain",
@@ -22,11 +20,10 @@ define(function (require, exports, module) {
         CommandRoll         = [],
         CommandRollIndex    = -1,
         KillProcess         = $('.hdy-brackets-shell-kill'),
-        ansiFormat = require("shellAnsiFormat");
-
-    var PreferencesManager = brackets.getModule("preferences/PreferencesManager"),
-        prefs = PreferencesManager.getExtensionPrefs("hdy.brackets-shell");
-
+        ansiFormat          = require("shellAnsiFormat"),
+        _preferencesManager = brackets.getModule("preferences/PreferencesManager"),
+        _preferences        = _preferencesManager.getExtensionPrefs("hdy.brackets-shell"),
+        PROMPT_TERMINATOR   = ">";
 
     function _toggle() {
         if (ShellPanel.isVisible()) {
@@ -57,22 +54,24 @@ define(function (require, exports, module) {
     function _executeCommand(e) {
 
         var currentCommandGroup = $(".hdy-current"),
-            currentCommand = $(".hdy-command", currentCommandGroup).text(),
+            currentCommand = $(".hdy-command", currentCommandGroup),
             cwd = $(".hdy-command", currentCommandGroup).attr("data-cwd");
 
         if (e.which === KeyEvent.DOM_VK_RETURN) {
             e.preventDefault();
 
             cwd = cwd.substring(0, cwd.length-1);
-            if (currentCommand.trim()) {
+            if (currentCommand.text().trim()) {
+
+                currentCommand.removeAttr("contenteditable");
 
                 KillProcess.removeAttr('disabled');
                 ShellDomain.exec("execute",
-                                 currentCommand,
+                                 currentCommand.text(),
                                  cwd,
                                  brackets.platform === "win");
 
-                CommandRoll.push(currentCommand);
+                CommandRoll.push(currentCommand.text());
                 console.info(CommandRoll);
             }
             else {
@@ -168,7 +167,7 @@ define(function (require, exports, module) {
             currentCommandResult.append($("<pre>"));
         }
 
-        if (prefs.get("dark")) {
+        if (_preferences.get("dark")) {
             $("pre", currentCommandResult).addClass('hdy-dark-theme');
         }
 
@@ -185,14 +184,11 @@ define(function (require, exports, module) {
 
         var commandGroups = $(".hdy-command-groups"),
             currentCommandGroup = $(".hdy-current"),
-            currentCommand = $(".hdy-command", currentCommandGroup),
-
-            newCommandGroup = $(CommandTemplateHtml),
+            newCommandGroup = $commandTemplateHtml.clone(),
             newCommand = $(".hdy-command", newCommandGroup);
 
-        if (currentCommandGroup.length) {
+        if (currentCommandGroup) {
             currentCommandGroup.removeClass("hdy-current");
-            currentCommand.removeAttr("contenteditable");
         }
 
         var element = $(".scrollPoint", currentCommandGroup);
@@ -235,6 +231,14 @@ define(function (require, exports, module) {
 //        $(".hdy-command-groups .hdy-current .hdy-command")
 //            .attr("data-cwd", cwd);
 
+        $(".hdy-command-groups").click(function() {
+            var currentCommand = $(".hdy-current .hdy-command");
+
+            if (currentCommand) {
+                _focus();
+            }
+        });
+
         $(".hdy-command-groups")
             .on("keydown", ".hdy-current .hdy-command", _executeCommand);
 
@@ -265,5 +269,4 @@ define(function (require, exports, module) {
     exports.show = _show;
     exports.isVisible = _isVisible;
     exports.setDirectory = _setDirectory;
-
 });

@@ -2,17 +2,17 @@
          indent: 4, maxerr: 50 */
 /*global define, $, brackets */
 
-define(function (require, exports, module) {
+define(function (require, exports) {
     "use strict";
 
-    var _projectManager         = brackets.getModule("project/ProjectManager"),
-        _appInit             = brackets.getModule("utils/AppInit"),
+    var ProjectManager         = brackets.getModule("project/ProjectManager"),
+        AppInit                = brackets.getModule("utils/AppInit"),
         _projectOpenSubscribers = [];
 
 
     function _watch() {
 
-        $(_projectManager).on("projectOpen", function(evt, data) {
+        $(ProjectManager).on("projectOpen", function(evt, data) {
 
             var cwd = _cleanPath(data._path);
 
@@ -38,7 +38,7 @@ define(function (require, exports, module) {
 
     function _isFunction(functionToCheck) {
         var getType = {};
-        return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+        return functionToCheck && getType.toString.call(functionToCheck) === "[object Function]";
     }
 
     function _register(callback) {
@@ -48,7 +48,7 @@ define(function (require, exports, module) {
         }
     }
 
-    _appInit.appReady(function () {
+    AppInit.appReady(function () {
     });
 
     exports.register = _register;
