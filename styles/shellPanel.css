@@ -1,9 +1,5 @@
-.hdy-brackets-shell {
-    padding-bottom: 30px;
-}
-
 .hdy-command-groups {
-    height: 100%;
+    height: calc(100% - 37px);
     overflow: auto;
 }
 
