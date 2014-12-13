@@ -15,8 +15,7 @@ module.exports = function(grunt) {
                     '!build/**',
                     '!node_modules/**',
                     '!tests/**',
-                    '!Gruntfile.js',
-                    '!package.json'
+                    '!Gruntfile.js'
                 ],
                 dest: '/'
             }
