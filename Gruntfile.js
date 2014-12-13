@@ -12,9 +12,9 @@ module.exports = function(grunt) {
                 },
                 expand: true,
                 src: ['**/*',
-                    '!build',
-                    '!node_modules',
-                    '!tests',
+                    '!build/**',
+                    '!node_modules/**',
+                    '!tests/**',
                     '!Gruntfile.js',
                     '!package.json'
                 ],

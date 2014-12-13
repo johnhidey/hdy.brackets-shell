@@ -1,11 +1,3 @@
-//         _       __          __    _     __
-//        (_)___  / /_  ____  / /_  (_)___/ /__  __  __
-//       / / __ \/ __ \/ __ \/ __ \/ / __  / _ \/ / / /
-//      / / /_/ / / / / / / / / / / / /_/ /  __/ /_/ /
-//   __/ /\____/_/ /_/_/ /_/_/ /_/_/\__,_/\___/\__, /
-//  /___/                                     /____/
-
-
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true,
          indent: 4, maxerr: 50 */
 /*global define, $, brackets, document, window */
@@ -16,8 +8,8 @@ define(function (require, exports, module) {
     var PanelManager        = brackets.getModule("view/PanelManager"),
         AppInit             = brackets.getModule("utils/AppInit"),
         KeyEvent            = brackets.getModule("utils/KeyEvent"),
-        ProjectManager      = brackets.getModule("project/ProjectManager"),
         ShellPanelHtml      = require("text!templates/shellPanel.html"),
+        PROMPT_TERMINATOR   = ">",
         CommandTemplateHtml = require("text!templates/commandTemplate.html"),
         ShellPanel          = PanelManager
                                 .createBottomPanel("hdy.brackets.shell.panel",
@@ -27,11 +19,11 @@ define(function (require, exports, module) {
         ShellDomain         = new NodeDomain("hdyShellDomain",
                                      ExtensionUtils.getModulePath(module,
                                                     "node/hdyShellDomain")),
-        PROMPT_TERMINATOR   = ">",
         CommandRoll         = [],
         CommandRollIndex    = -1,
+        KillProcess         = $('.hdy-brackets-shell-kill'),
         ansiFormat = require("shellAnsiFormat");
-    
+
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager"),
         prefs = PreferencesManager.getExtensionPrefs("hdy.brackets-shell");
 
@@ -73,6 +65,8 @@ define(function (require, exports, module) {
 
             cwd = cwd.substring(0, cwd.length-1);
             if (currentCommand.trim()) {
+
+                KillProcess.removeAttr('disabled');
                 ShellDomain.exec("execute",
                                  currentCommand,
                                  cwd,
@@ -141,11 +135,13 @@ define(function (require, exports, module) {
     });
 
     $(ShellDomain).on("stderr", function(evt, data) {
-        _addShellOutput(data, 'hdy-error');
+        _addShellOutput(data);
     });
 
     $(ShellDomain).on("close", function(evt, dir) {
         _addShellLine(dir);
+
+        KillProcess.attr('disabled', 'disabled');
     });
 
     $(ShellDomain).on("clear", function() {
@@ -162,31 +158,29 @@ define(function (require, exports, module) {
 
     }
 
-    function _addShellOutput(data, color) {
+    function _addShellOutput(data) {
 
         var currentCommandGroup = $(".hdy-current"),
             currentCommandResult = $(".hdy-command-result",
                                      currentCommandGroup);
 
         if ($("pre", currentCommandResult).length === 0) {
-            currentCommandResult.append($("<pre>1"));
+            currentCommandResult.append($("<pre>"));
         }
 
-        if (color) {
-            $("pre", currentCommandResult).addClass('hdy-error');
-        }
-        
         if (prefs.get("dark")) {
             $("pre", currentCommandResult).addClass('hdy-dark-theme');
         }
-        
+
         if(ansiFormat.hasAceptedAnsiFormat(data)){
             ansiFormat.formattedText(data, currentCommandResult);
         } else {
             $("pre", currentCommandResult).append(document.createTextNode(data));
         }
+
+        _scrollToBottom();
     }
-  
+
     function _addShellLine(cwd) {
 
         var commandGroups = $(".hdy-command-groups"),
@@ -201,57 +195,51 @@ define(function (require, exports, module) {
             currentCommand.removeAttr("contenteditable");
         }
 
-        newCommand.attr("data-cwd", _getCommandPrompt(cwd));
+        var element = $(".scrollPoint", currentCommandGroup);
+        if (element.length) {
+            currentCommandGroup[0].removeChild(element[0]);
+        }
+        newCommand.attr("data-cwd", cwd + PROMPT_TERMINATOR);
         commandGroups.append(newCommandGroup);
 
         _focus();
 
     }
 
-    function _getCommandPrompt(cwd) {
+    function _scrollToBottom() {
 
-        // remove trailing directory separator if present
-        var projectDir = ProjectManager.getProjectRoot().fullPath;
-        if (projectDir.substr(projectDir.length-1, 1) === "/") {
-            projectDir = projectDir.substring(0, projectDir.length-1);
-        }
+        var panel = $(".hdy-current")[0];
+        panel.scrollIntoView(false);
 
-        // remmove path terminator
-        if (cwd && cwd.substr(cwd.length-1, 1) === PROMPT_TERMINATOR) {
-            cwd = cwd.substring(0, cwd.length-1);
-        }
-
-        var currentPath = cwd || projectDir;
-
-        if (brackets.platform === "win") {
-            currentPath = currentPath.replace(/\//g, "\\");
-        }
-
-        return currentPath + PROMPT_TERMINATOR;
     }
 
     function _focus() {
 
-        var commandInput = $(".hdy-current .hdy-command");
-        commandInput.focus();
+        var commandInput = $(".hdy-current .hdy-command")[0];
+        var scrollPoint = $(".scrollPoint")[0];
+
+        if (scrollPoint) {
+            scrollPoint.scrollIntoView(false);
+            commandInput.focus();
+        }
     }
 
     // Initialize the shellPanel
     AppInit.appReady(function () {
 
-        var cwd = _getCommandPrompt();
-
+        KillProcess.click(function() {
+            ShellDomain.exec("kill");
+        });
+        KillProcess.attr('disabled', 'disabled');
         $(".close", ShellPanel.$panel).click(_toggle);
-        $(".hdy-command-groups .hdy-current .hdy-command")
-            .attr("data-cwd", cwd);
+//        $(".hdy-command-groups .hdy-current .hdy-command")
+//            .attr("data-cwd", cwd);
 
         $(".hdy-command-groups")
             .on("keydown", ".hdy-current .hdy-command", _executeCommand);
 
         $(".hdy-command-groups")
             .on("keydown", ".hdy-current .hdy-command", _rollCommand);
-
-        _addShellLine(cwd);
 
     });
 
@@ -268,9 +256,14 @@ define(function (require, exports, module) {
 
     }
 
+    function _setDirectory(cwd) {
+        _addShellLine(cwd);
+    }
+
     exports.toggle = _toggle;
     exports.hide = _hide;
     exports.show = _show;
     exports.isVisible = _isVisible;
+    exports.setDirectory = _setDirectory;
 
 });
