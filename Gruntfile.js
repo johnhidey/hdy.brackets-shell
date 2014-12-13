@@ -27,14 +27,14 @@ module.exports = function(grunt) {
                         expand: true,
                         cwd: 'node_modules/splitargs/',
                         src: ['**/*'],
-                        dest: 'node/splitargs/',
+                        dest: 'node/node_modules/splitargs/',
                         filter: 'isFile'
                     },
                     {
                         expand: true,
                         cwd: 'node_modules/tree-kill/',
                         src: ['**/*'],
-                        dest: 'node/tree-kill/',
+                        dest: 'node/node_modules/tree-kill/',
                         filter: 'isFile'
                     }
                 ]
