@@ -1,13 +1,13 @@
 ## Change Log
 
 ### v0.0.5
-* BUG: Change the way the command are actually executed from child_process.exec to
+* BUGFIX: Change the way the command are actually executed from child_process.exec to
 child_process.spawn
+* BUGFIX: Fixed scrollbar scrolling down beyound visible panel.
 * FEATURE: ANSI console color support added [ANSI Escape Codes](http://en.wikipedia.org/wiki/ANSI_escape_code#Colors).
-Many thanks to Andres Lozada Mosto @alfathenus
-for adding this
+Many thanks to Andres Lozada Mosto @alfathenus for adding this
+* FEATURE: Added setting to support dark theme. (Thanks again to Andres Lozada Mosto @alfathenus)
 * FEATURE: Added kill process to title bar of console
-* FEATURE: Added detach process to title bar of console (this may be removed later)
 
 ### v0.0.4
 * BUG: Resolved issue when attempting to browse to directory which doesn't

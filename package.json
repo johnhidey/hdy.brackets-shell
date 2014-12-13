@@ -1,7 +1,7 @@
 {
   "name": "hdy.brackets-shell",
   "title": "Brackets Shell",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Shell access within Brackets",
   "homepage": "http://john.hidey.com/hdy.brackets-shell/",
   "repository": {
