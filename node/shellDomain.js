@@ -3,6 +3,7 @@
 (function() {
     "use strict";
 
+
     var _domainManager,
         child,
         kill = require("tree-kill");
@@ -10,7 +11,6 @@
     function _execute(cmd, cwd, isWin) {
 
         var spawn = require("child_process").spawn,
-            splitarps = require("splitargs"),
             args,
             enddir = cwd,
             tempdir,
@@ -39,18 +39,13 @@
             _domainManager.emitEvent("hdyShellDomain", "clear");
         }
 
-        args = splitarps(cmd);
-        if (args.length === 0) {
-            args = [];
-        }
-
         if (isWin) {
+            args = ["/c", cmd];
             cmd = "cmd.exe";
-            args.unshift("/c");
         }
         else {
+            args = ["-c", cmd];
             cmd = "/bin/sh";
-            args.unshift("-c");
         }
 
         child = spawn(cmd, args, { cwd: cwd, env: env });
