@@ -49,7 +49,7 @@
             args.unshift("/c");
         }
         else {
-            cmd = "sh";
+            cmd = "/bin/sh";
             args.unshift("-c");
         }
 
