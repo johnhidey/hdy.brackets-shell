@@ -1,5 +1,9 @@
 ## Change Log
 
+### v0.0.9
+* BUGFIX: Replace character with charCode 65533 to avoid showing garbage on command result on Windows (10?)
+* DOC: updated readme file with extension options and usage
+
 ### v0.0.8
 * BUGFIX: Prompt will not focus when you click anywhere within the shell panel
 * BUGFIX: Prompt disables immediately after pressing enter to prevent the accidently
