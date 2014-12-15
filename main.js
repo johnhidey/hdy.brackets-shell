@@ -32,18 +32,18 @@ define(function (require, exports, module) {
     AppInit.appReady(function () {
 
         var projectWatcher  = require("projectWatcher"),
-            commandShell    = require("shellPanel");
+            ShellPanelView    = require("viewModels/shellPanelView"),
+            commandShell = new ShellPanelView("My Title", projectWatcher.cleanPath(ProjectManager.getProjectRoot().fullPath));
 
         ExtensionUtils.loadStyleSheet(module, "styles/shellPanel.css");
         $icon.on("click", commandShell.toggle);
 
         commandShell.hide();
-        commandShell.setDirectory(projectWatcher.cleanPath(ProjectManager.getProjectRoot().fullPath));
 
         if (Preferences.get("trackProject")) {
             projectWatcher.register(function(cwd) {
                 if (cwd) {
-                    commandShell.setDirectory(cwd);
+                    commandShell.cwd = cwd;
                 }
             });
         }

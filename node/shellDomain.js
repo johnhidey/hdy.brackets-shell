@@ -7,20 +7,14 @@
         child,
         kill = require("tree-kill");
 
-    /**
-    * @private
-    * Handler function for the simple.getMemory command.
-    * @param {boolean} total If true, return total memory;
-                       if false, return free memory only.
-    * @return {number} The amount of memory.
-    */
     function _execute(cmd, cwd, isWin) {
 
         var spawn = require("child_process").spawn,
             splitarps = require("splitargs"),
             args,
             enddir = cwd,
-            tempdir;
+            tempdir,
+            env = process.env;
 
         cmd = cmd.trim();
 
@@ -59,14 +53,18 @@
             args.unshift("-c");
         }
 
-        child = spawn(cmd, args, { cwd: cwd, env: process.env });
+        child = spawn(cmd, args, { cwd: cwd, env: env });
 
         child.stdout.on("data", function (data) {
-            _domainManager.emitEvent("hdyShellDomain", "stdout", [data.toString()]);
+            var parsedOutput = data.toString().trim();
+
+            _domainManager.emitEvent("hdyShellDomain", "stdout", [parsedOutput]);
         });
 
         child.stderr.on("data", function (data) {
-            _domainManager.emitEvent("hdyShellDomain", "stderr", [data.toString()]);
+            var parsedOutput = data.toString().trim();
+
+            _domainManager.emitEvent("hdyShellDomain", "stderr", [parsedOutput]);
         });
 
         child.on("close", function () {
