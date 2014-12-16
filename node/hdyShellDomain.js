@@ -14,7 +14,7 @@
                        if false, return free memory only.
     * @return {number} The amount of memory.
     */
-    function _execute(cmd, cwd, isWin) {
+    function _execute(cmd, cwd, isWin, shell) {
 
         var spawn = require("child_process").spawn,
             args,
@@ -46,11 +46,11 @@
 
         if (isWin) {
             args = ["/c", cmd];
-            cmd = "cmd.exe";
+            cmd = shell;
         }
         else {
             args = ["-c", cmd];
-            cmd = "/bin/sh";
+            cmd = shell;
         }
 
         child = spawn(cmd, args, { cwd: cwd, env: process.env });
@@ -64,6 +64,7 @@
         });
 
         child.on("close", function () {
+            child.cwd
             child.kill();
             _domainManager.emitEvent("hdyShellDomain", "close", [enddir]);
         });
@@ -132,8 +133,13 @@
             },
             {
                 name: "isWin",
-                type: "Boolean",
+                type: "boolean",
                 description: "Is Windows System ?"
+            },
+            {
+                name: "shell",
+                type: "string",
+                description: "Path of the Shell used to execute the commands"
             }]
         );
 

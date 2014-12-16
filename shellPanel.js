@@ -69,7 +69,8 @@ define(function (require, exports, module) {
                 ShellDomain.exec("execute",
                                  currentCommand.text(),
                                  cwd,
-                                 brackets.platform === "win");
+                                 brackets.platform === "win",
+                                 _preferences.get("shell"));
 
                 CommandRoll.push(currentCommand.text());
                 console.info(CommandRoll);
@@ -159,12 +160,12 @@ define(function (require, exports, module) {
 
     function replaceCharAtIndex(str, index, newChar) {
         var array = str.split('');
-        
+
         array[index] = newChar;
-        
+
         return array.join('');
     }
-    
+
     function _addShellOutput(data) {
 
         var currentCommandGroup = $(".hdy-current"),
@@ -192,7 +193,7 @@ define(function (require, exports, module) {
 
         _scrollToBottom();
     }
-    
+
     function _addShellLine(cwd) {
 
         var commandGroups = $(".hdy-command-groups"),

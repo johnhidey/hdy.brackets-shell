@@ -1,9 +1,9 @@
 {
   "name": "hdy.brackets-shell",
   "title": "Brackets Shell",
-  "version": "0.0.9",
-  "description": "Shell access within Brackets",
-  "homepage": "http://john.hidey.com/hdy.brackets-shell/",
+  "version": "0.0.10",
+  "description": "Shell access within Brackets. Want to run some shell command, install a node package, install from bower the list goes on and on. Well then, this extension is for you.",
+  "homepage": "https://github.com/johnhidey/hdy.brackets-shell/",
   "repository": {
     "type": "git",
     "url": "https://github.com/johnhidey/hdy.brackets-shell"
@@ -14,12 +14,12 @@
   },
   "license": "MIT",
   "keywords": [
-    "Command",
-    "Prompt",
-    "Shell",
-    "OS-X",
-    "Linux",
-    "Windows"
+    "command",
+    "prompt",
+    "shell",
+    "os-x",
+    "linux",
+    "windows"
   ],
   "engines": {
     "brackets": ">=0.40.0"
@@ -32,7 +32,6 @@
     "mocha": "^2.0.1"
   },
   "dependencies": {
-    "splitargs": "^0.0.3",
     "tree-kill": "^0.0.6"
   }
 }

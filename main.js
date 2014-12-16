@@ -29,6 +29,16 @@ define(function (require, exports, module) {
         Preferences.save();
     }
 
+    if(Preferences.get("shell") === undefined) {
+        Preferences.definePreference("shell", "string", "cmd.exe");
+        if (brackets.platform === "win") {
+            Preferences.set("shell", "cmd.exe");
+        } else {
+            Preferences.set("shell", "/bin/sh");
+        }
+        Preferences.save();
+    }
+
     AppInit.appReady(function () {
 
         var projectWatcher  = require("projectWatcher"),
