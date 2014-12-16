@@ -157,6 +157,14 @@ define(function (require, exports, module) {
 
     }
 
+    function replaceCharAtIndex(str, index, newChar) {
+        var array = str.split('');
+        
+        array[index] = newChar;
+        
+        return array.join('');
+    }
+    
     function _addShellOutput(data) {
 
         var currentCommandGroup = $(".hdy-current"),
@@ -174,12 +182,17 @@ define(function (require, exports, module) {
         if(ansiFormat.hasAceptedAnsiFormat(data)){
             ansiFormat.formattedText(data, currentCommandResult);
         } else {
+            for (var i = 0; i < data.length; i++) {
+                if (data.charCodeAt(i) === 65533) {
+                    data = replaceCharAtIndex(data, i, ".");
+                }
+            }
             $("pre", currentCommandResult).append(document.createTextNode(data));
         }
 
         _scrollToBottom();
     }
-
+    
     function _addShellLine(cwd) {
 
         var commandGroups = $(".hdy-command-groups"),

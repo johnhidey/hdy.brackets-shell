@@ -26,13 +26,6 @@ module.exports = function(grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: "node_modules/splitargs/",
-                        src: ["**/*"],
-                        dest: "node/node_modules/splitargs/",
-                        filter: "isFile"
-                    },
-                    {
-                        expand: true,
                         cwd: "node_modules/tree-kill/",
                         src: ["**/*"],
                         dest: "node/node_modules/tree-kill/",

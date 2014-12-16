@@ -17,7 +17,6 @@
     function _execute(cmd, cwd, isWin) {
 
         var spawn = require("child_process").spawn,
-            splitarps = require("splitargs"),
             args,
             enddir = cwd,
             tempdir;
@@ -45,18 +44,13 @@
             _domainManager.emitEvent("hdyShellDomain", "clear");
         }
 
-        args = splitarps(cmd);
-        if (args.length === 0) {
-            args = [];
-        }
-
         if (isWin) {
+            args = ["/c", cmd];
             cmd = "cmd.exe";
-            args.unshift("/c");
         }
         else {
-            cmd = "sh";
-            args.unshift("-c");
+            args = ["-c", cmd];
+            cmd = "/bin/sh";
         }
 
         child = spawn(cmd, args, { cwd: cwd, env: process.env });
@@ -99,7 +93,7 @@
     function _init(domainManager) {
 
         if (!domainManager.hasDomain("hdyShellDomain")) {
-            domainManager.registerDomain("hdyShellDomain", {major: 0, minor: 1});
+            domainManager.registerDomain("hdyShellDomain", {major: 0, minor: 2});
         }
 
         domainManager.registerCommand(
