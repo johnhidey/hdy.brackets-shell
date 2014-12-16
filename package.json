@@ -1,7 +1,7 @@
 {
   "name": "hdy.brackets-shell",
   "title": "Brackets Shell",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Shell access within Brackets",
   "homepage": "http://john.hidey.com/hdy.brackets-shell/",
   "repository": {
@@ -14,8 +14,12 @@
   },
   "license": "MIT",
   "keywords": [
-    "command",
-    "shell"
+    "Command",
+    "Prompt",
+    "Shell",
+    "OS-X",
+    "Linux",
+    "Windows"
   ],
   "engines": {
     "brackets": ">=0.40.0"
