@@ -64,7 +64,6 @@
         });
 
         child.on("close", function () {
-            child.cwd
             child.kill();
             _domainManager.emitEvent("hdyShellDomain", "close", [enddir]);
         });
@@ -94,7 +93,7 @@
     function _init(domainManager) {
 
         if (!domainManager.hasDomain("hdyShellDomain")) {
-            domainManager.registerDomain("hdyShellDomain", {major: 0, minor: 2});
+            domainManager.registerDomain("hdyShellDomain", {major: 0, minor: 3});
         }
 
         domainManager.registerCommand(

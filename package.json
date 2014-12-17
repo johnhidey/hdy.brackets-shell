@@ -1,7 +1,7 @@
 {
   "name": "hdy.brackets-shell",
   "title": "Brackets Shell",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Shell access within Brackets. Want to run some shell command, install a node package, install from bower the list goes on and on. Well then, this extension is for you.",
   "homepage": "https://github.com/johnhidey/hdy.brackets-shell/",
   "repository": {
