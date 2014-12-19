@@ -1,7 +1,7 @@
 ## Change Log
 
 ### v0.0.11
-* BUG: Fixed but where spawn close event callback was erroring
+* BUG: Fixed bug where spawn close event callback was erroring
 
 ### v0.0.10
 * BUG: Added feature for being able to specify the shell to use resolves the one outstanding issue with running on the *nix platform
