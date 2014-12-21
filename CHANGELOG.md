@@ -1,10 +1,14 @@
 ## Change Log
 
+### v0.0.12
+* FEATURE: Usage tracking added to application
+* DOC: Update doc in CHANGELOG
+
 ### v0.0.11
-* BUG: Fixed bug where spawn close event callback was erroring
+* BUGFIX: Fixed bug where spawn close event callback was erroring
 
 ### v0.0.10
-* BUG: Added feature for being able to specify the shell to use resolves the one outstanding issue with running on the *nix platform
+* BUGFIX: Added feature for being able to specify the shell to use resolves the one outstanding issue with running on the *nix platform
 * FEATURE: Updated *nix support for using different shells. The preference 'hdy.brackets-shell.shell is the string path
 to the shell to be used.  On Windows machines this will default to "cmd.exe" and on *nix machines this will default to
 "/bin/sh". If you wish to you a different shell, say bash, just set this value to something like '/bin/bash'

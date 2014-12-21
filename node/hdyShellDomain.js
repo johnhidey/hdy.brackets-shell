@@ -53,17 +53,17 @@
             cmd = shell;
         }
 
-        child = spawn(cmd, args, { cwd: cwd, env: process.env });
+        child = spawn(cmd, args, { cwd: cwd, env: process.env, stdio: 'inherit' });
 
-        child.stdout.on("data", function (data) {
+        process.stdout.on("data", function (data) {
             _domainManager.emitEvent("hdyShellDomain", "stdout", [data.toString()]);
         });
 
-        child.stderr.on("data", function (data) {
+        process.stderr.on("data", function (data) {
             _domainManager.emitEvent("hdyShellDomain", "stderr", [data.toString()]);
         });
 
-        child.on("close", function () {
+        process.on("close", function () {
             child.kill();
             _domainManager.emitEvent("hdyShellDomain", "close", [enddir]);
         });
@@ -93,7 +93,7 @@
     function _init(domainManager) {
 
         if (!domainManager.hasDomain("hdyShellDomain")) {
-            domainManager.registerDomain("hdyShellDomain", {major: 0, minor: 3});
+            domainManager.registerDomain("hdyShellDomain", {major: 0, minor: 12});
         }
 
         domainManager.registerCommand(
