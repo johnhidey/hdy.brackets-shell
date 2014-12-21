@@ -51,54 +51,6 @@ define(function (require, exports, module) {
     ShellPanelView.prototype.hide = _hide;
     ShellPanelView.prototype.isVisible = _isVisible;
 
-    /*
-    * object.watch v0.0.1: Cross-browser object.watch
-    *
-    * By Elijah Grey, http://eligrey.com
-    *
-    * A shim that partially implements object.watch and object.unwatch
-    * in browsers that have accessor support.
-    *
-    * Public Domain.
-    * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
-    */
-
-    // object.watch
-    if (!ShellPanelView.prototype.watch)
-    {
-        ShellPanelView.prototype.watch = function (prop, handler) {
-            var oldval = this[prop], newval = oldval,
-            getter = function () {
-                return newval;
-            },
-            setter = function (val) {
-                oldval = newval;
-                return newval = handler.call(this, prop, oldval, val);
-            };
-            if (delete this[prop]) { // can't watch constants
-                if (ShellPanelView.defineProperty) { // ECMAScript 5
-                    ShellPanelView.defineProperty(this, prop, {
-                        get: getter,
-                        set: setter
-                    });
-                }
-                else if (ShellPanelView.prototype.__defineGetter__ && ShellPanelView.prototype.__defineSetter__) { // legacy
-                    ShellPanelView.prototype.__defineGetter__.call(this, prop, getter);
-                    ShellPanelView.prototype.__defineSetter__.call(this, prop, setter);
-                }
-            }
-        };
-    }
-
-    // object.unwatch
-    if (!ShellPanelView.prototype.unwatch) {
-        ShellPanelView.prototype.unwatch = function (prop) {
-            var val = this[prop];
-            delete this[prop]; // remove accessors
-            this[prop] = val;
-        };
-    }
-
     function _toggle() {
         if (ShellPanelBottom.isVisible()) {
             _hide();
@@ -143,7 +95,8 @@ define(function (require, exports, module) {
                 ShellDomain.exec("execute",
                                  currentCommand.text(),
                                  cwd,
-                                 brackets.platform === "win");
+                                 brackets.platform === "win",
+                                 _preferences.get("shell"));
 
                 CommandRoll.push(currentCommand.text());
                 console.info(CommandRoll);
@@ -230,6 +183,14 @@ define(function (require, exports, module) {
 
     }
 
+    function replaceCharAtIndex(str, index, newChar) {
+        var array = str.split('');
+
+        array[index] = newChar;
+
+        return array.join('');
+    }
+
     function _addShellOutput(data) {
 
         var currentCommandGroup = $(".hdy-current"),
@@ -244,11 +205,15 @@ define(function (require, exports, module) {
             $("pre", currentCommandResult).addClass('hdy-dark-theme');
         }
 
-        $("pre", currentCommandResult).append(document.createTextNode(data));
 //        if(ansiFormat.hasAceptedAnsiFormat(data)){
 //            ansiFormat.formattedText(data, currentCommandResult);
 //        } else {
-//            $("pre", currentCommandResult).append(document.createTextNode(data));
+//            for (var i = 0; i < data.length; i++) {
+//                if (data.charCodeAt(i) === 65533) {
+//                    data = replaceCharAtIndex(data, i, ".");
+//                }
+//            }
+            $("pre", currentCommandResult).append(document.createTextNode(data));
 //        }
 
         _scrollToBottom();

@@ -6,65 +6,64 @@
 
     var _domainManager,
         child,
-        kill = require("tree-kill");
+        kill = require("tree-kill"),
+        ansi = require("ansi-webkit");
 
-    function _execute(cmd, cwd, isWin) {
+    /**
+    * @private
+    * Handler function for the simple.getMemory command.
+    * @param {boolean} total If true, return total memory;
+                       if false, return free memory only.
+    * @return {number} The amount of memory.
+    */
+    function _execute(cmd) {
 
-        var spawn = require("child_process").spawn,
-            args,
-            enddir = cwd,
-            tempdir,
-            env = process.env;
-
-        cmd = cmd.trim();
+        var spawn   = require("child_process").spawn,
+            dir     = cmd.cwd,
+            text    = cmd.cmd,
+            args    = cmd.cmd ? "/c" : "-c",
+            shell   = cmd.shell ? "cmd.exe" : cmd.shell,
+            isWin   = !cmd.shell || cmd.shell.trim().toLowerCase() === "cmd.exe",
+            env     = process.env;
 
         // Are we changing directories?  If so we need
         // to handle that in a special way.
-        if (cmd.slice(0, 3).toLowerCase() === "cd ") {
+        // TODO: Might need to change this.
+        if (text.slice(0, 3).toLowerCase() === "cd ") {
 
             try {
-                process.chdir(cwd);
-                tempdir = cmd.substring(2).trim();
-                process.chdir(tempdir);
-                enddir = process.cwd();
+                process.chdir(dir);
+                process.chdir(text.substring(2).trim());
+                dir = process.cwd();
             }
             catch (e) {}
 
         }
 
         // clearing the console with clear or clr?
-        if ((cmd.toLowerCase() === "clear" && !isWin) ||
-            (cmd.toLowerCase() === "cls" && isWin)) {
+        if ((text.toLowerCase() === "clear" && !isWin) ||
+            (text.toLowerCase() === "cls" && isWin)) {
 
             _domainManager.emitEvent("hdyShellDomain", "clear");
         }
 
-        if (isWin) {
-            args = ["/c", cmd];
-            cmd = "cmd.exe";
-        }
-        else {
-            args = ["-c", cmd];
-            cmd = "/bin/sh";
-        }
-
-        child = spawn(cmd, args, { cwd: cwd, env: env });
+        child = spawn(shell, [args, text], { cwd: dir, env: env, stdio: 'inherit' });
 
         child.stdout.on("data", function (data) {
-            var parsedOutput = data.toString().trim();
+            var parsedOutput = ansi.parse(data.toString().trim());
 
             _domainManager.emitEvent("hdyShellDomain", "stdout", [parsedOutput]);
         });
 
         child.stderr.on("data", function (data) {
-            var parsedOutput = data.toString().trim();
+            var parsedOutput = ansi.parse(data.toString().trim());
 
             _domainManager.emitEvent("hdyShellDomain", "stderr", [parsedOutput]);
         });
 
         child.on("close", function () {
             child.kill();
-            _domainManager.emitEvent("hdyShellDomain", "close", [enddir]);
+            _domainManager.emitEvent("hdyShellDomain", "close", [dir]);
         });
 
     }
@@ -92,7 +91,7 @@
     function _init(domainManager) {
 
         if (!domainManager.hasDomain("hdyShellDomain")) {
-            domainManager.registerDomain("hdyShellDomain", {major: 0, minor: 1});
+            domainManager.registerDomain("hdyShellDomain", {major: 0, minor: 5});
         }
 
         domainManager.registerCommand(
@@ -131,8 +130,13 @@
             },
             {
                 name: "isWin",
-                type: "Boolean",
+                type: "boolean",
                 description: "Is Windows System ?"
+            },
+            {
+                name: "shell",
+                type: "string",
+                description: "Path of the Shell used to execute the commands"
             }]
         );
 

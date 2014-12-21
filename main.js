@@ -29,10 +29,20 @@ define(function (require, exports, module) {
         Preferences.save();
     }
 
+    if(Preferences.get("shell") === undefined) {
+        Preferences.definePreference("shell", "string", "cmd.exe");
+        if (brackets.platform === "win") {
+            Preferences.set("shell", "cmd.exe");
+        } else {
+            Preferences.set("shell", "/bin/sh");
+        }
+        Preferences.save();
+    }
+
     AppInit.appReady(function () {
 
         var projectWatcher  = require("projectWatcher"),
-            ShellPanelView    = require("viewModels/shellPanelView"),
+            ShellPanelView    = require("views/shellPanelView"),
             commandShell = new ShellPanelView("My Title", projectWatcher.cleanPath(ProjectManager.getProjectRoot().fullPath));
 
         ExtensionUtils.loadStyleSheet(module, "styles/shellPanel.css");

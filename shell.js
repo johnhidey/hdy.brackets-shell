@@ -12,9 +12,9 @@ define(function (require, exports, module) {
                                           "node/shellDomain")),
         self;
 
-    function _execute(cwd, cmd, isWindows) {
+    function _execute(cmd) {
 
-        ShellDomain.exec("execute", cmd, cwd, isWindows);
+        ShellDomain.exec("execute", cmd);
 
     }
 
@@ -94,7 +94,6 @@ define(function (require, exports, module) {
     Shell.prototype.execute         = _execute;
     Shell.prototype.kill            = _kill;
     Shell.prototype.onStdOut        = _onStdOut;
-    Shell.prototype.onStdErr        = _onStdErr;
     Shell.prototype.onClose         = _onClose;
     Shell.prototype.onClear         = _onClear;
 

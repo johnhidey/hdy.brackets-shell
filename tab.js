@@ -5,7 +5,8 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var self;
+    var self,
+        Shell = require("shell");
 
     function _rename(name) {
 
@@ -13,11 +14,17 @@ define(function (require, exports, module) {
 
     }
 
-    function _initialize() { }
+    function _initialize() {
 
-    var Tab = function(name) {
+        self.shell = new Shell();
+    }
 
-        self = this;
+    var Tab = function(name, options) {
+
+        var self    = this,
+            Shell = require("shell");
+
+        self.shell   = new Shell();
         self.name       = name;
 
         _initialize();
