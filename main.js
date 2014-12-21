@@ -45,6 +45,8 @@ define(function (require, exports, module) {
             ShellPanelView    = require("views/shellPanelView"),
             commandShell = new ShellPanelView("My Title", projectWatcher.cleanPath(ProjectManager.getProjectRoot().fullPath));
 
+        require('./online').init();
+
         ExtensionUtils.loadStyleSheet(module, "styles/shellPanel.css");
         $icon.on("click", commandShell.toggle);
 

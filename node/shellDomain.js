@@ -49,19 +49,19 @@
 
         child = spawn(shell, [args, text], { cwd: dir, env: env, stdio: 'inherit' });
 
-        child.stdout.on("data", function (data) {
+        process.stdout.on("data", function (data) {
             var parsedOutput = ansi.parse(data.toString().trim());
 
             _domainManager.emitEvent("hdyShellDomain", "stdout", [parsedOutput]);
         });
 
-        child.stderr.on("data", function (data) {
+        process.stderr.on("data", function (data) {
             var parsedOutput = ansi.parse(data.toString().trim());
 
             _domainManager.emitEvent("hdyShellDomain", "stderr", [parsedOutput]);
         });
 
-        child.on("close", function () {
+        process.on("close", function () {
             child.kill();
             _domainManager.emitEvent("hdyShellDomain", "close", [dir]);
         });
@@ -91,7 +91,7 @@
     function _init(domainManager) {
 
         if (!domainManager.hasDomain("hdyShellDomain")) {
-            domainManager.registerDomain("hdyShellDomain", {major: 0, minor: 5});
+            domainManager.registerDomain("hdyShellDomain", {major: 0, minor: 12});
         }
 
         domainManager.registerCommand(

@@ -33,6 +33,7 @@
 
 .hdy-command-groups {
     height: calc(100% - 41px);
+    margin-left: 5px;
     overflow: auto;
 }
 
