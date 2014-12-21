@@ -3,6 +3,7 @@
 ### v0.0.12
 * FEATURE: Usage tracking added to application
 * DOC: Update doc in CHANGELOG
+* BUGFIX: Minor UI enhancement to add left margin to the shell output
 
 ### v0.0.11
 * BUGFIX: Fixed bug where spawn close event callback was erroring
