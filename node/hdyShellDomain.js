@@ -53,17 +53,17 @@
             cmd = shell;
         }
 
-        child = spawn(cmd, args, { cwd: cwd, env: process.env, stdio: 'inherit' });
+        child = spawn(cmd, args, { cwd: cwd, env: process.env });
 
-        process.stdout.on("data", function (data) {
+        child.stdout.on("data", function (data) {
             _domainManager.emitEvent("hdyShellDomain", "stdout", [data.toString()]);
         });
 
-        process.stderr.on("data", function (data) {
+        child.stderr.on("data", function (data) {
             _domainManager.emitEvent("hdyShellDomain", "stderr", [data.toString()]);
         });
 
-        process.on("close", function () {
+        child.on("close", function () {
             child.kill();
             _domainManager.emitEvent("hdyShellDomain", "close", [enddir]);
         });
