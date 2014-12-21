@@ -44,6 +44,8 @@ define(function (require, exports, module) {
         var projectWatcher  = require("projectWatcher"),
             commandShell    = require("shellPanel");
 
+        require('./online').init();
+
         ExtensionUtils.loadStyleSheet(module, "styles/shellPanel.css");
         $icon.on("click", commandShell.toggle);
 
