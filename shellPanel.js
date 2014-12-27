@@ -25,6 +25,12 @@ define(function (require, exports, module) {
         _preferences        = _preferencesManager.getExtensionPrefs("hdy.brackets-shell"),
         PROMPT_TERMINATOR   = ">";
 
+if (typeof String.prototype.endsWith !== 'function') {
+    String.prototype.endsWith = function(suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
+}
+
     function _toggle() {
         if (ShellPanel.isVisible()) {
             _hide();
@@ -51,10 +57,27 @@ define(function (require, exports, module) {
         return ShellPanel.isVisible();
     }
 
+    function _provideInput(e) {
+
+        var currentCommandGroup = $(".hdy-current"),
+            userInput = $(".hdy-input", currentCommandGroup);
+
+        if (e.which === KeyEvent.DOM_VK_RETURN) {
+            e.preventDefault();
+
+            userInput.removeAttr("contenteditable");
+
+            ShellDomain.exec("writeInput",
+                                 userInput.text());
+        }
+
+    }
+
     function _executeCommand(e) {
 
         var currentCommandGroup = $(".hdy-current"),
             currentCommand = $(".hdy-command", currentCommandGroup),
+            currentInputs = $(".hdy-input", currentCommandGroup),
             cwd = $(".hdy-command", currentCommandGroup).attr("data-cwd");
 
         if (e.which === KeyEvent.DOM_VK_RETURN) {
@@ -63,7 +86,8 @@ define(function (require, exports, module) {
             cwd = cwd.substring(0, cwd.length-1);
             if (currentCommand.text().trim()) {
 
-                currentCommand.removeAttr("contenteditable");
+                currentInputs.removeAttr("contenteditable");
+                currentCommand.removeAttr("contenteditable")                                                                                                                            ;
 
                 KillProcess.removeAttr('disabled');
                 ShellDomain.exec("execute",
@@ -132,6 +156,11 @@ define(function (require, exports, module) {
 
     $(ShellDomain).on("stdout", function(evt, data) {
         _addShellOutput(data);
+
+        if (!data.endsWith("\n")) {
+            _addShellInput();
+        }
+
     });
 
     $(ShellDomain).on("stderr", function(evt, data) {
@@ -164,6 +193,28 @@ define(function (require, exports, module) {
         array[index] = newChar;
 
         return array.join('');
+    }
+
+    function _addShellInput() {
+
+        var currentCommandGroup = $(".hdy-current"),
+            currentCommandResult = $(".hdy-command-result",
+                                     currentCommandGroup);
+
+        if ($("pre", currentCommandResult).length === 0) {
+            currentCommandResult.append($("<pre>"));
+        }
+
+        if (_preferences.get("dark")) {
+            $("pre", currentCommandResult).addClass('hdy-dark-theme');
+        }
+
+        var input = $("<span class=\"hdy-input\" autofocus contenteditable=\"true\"></span>");
+        $("pre", currentCommandResult).append(input);
+
+        _scrollToBottom();
+
+        input.focus();
     }
 
     function _addShellOutput(data) {
@@ -240,10 +291,9 @@ define(function (require, exports, module) {
         KillProcess.click(function() {
             ShellDomain.exec("kill");
         });
+
         KillProcess.attr('disabled', 'disabled');
         $(".close", ShellPanel.$panel).click(_toggle);
-//        $(".hdy-command-groups .hdy-current .hdy-command")
-//            .attr("data-cwd", cwd);
 
         $(".hdy-command-groups").click(function() {
             var currentCommand = $(".hdy-current .hdy-command");
@@ -252,6 +302,9 @@ define(function (require, exports, module) {
                 _focus();
             }
         });
+
+        $(".hdy-command-groups")
+            .on("keydown", ".hdy-current .hdy-input", _provideInput);
 
         $(".hdy-command-groups")
             .on("keydown", ".hdy-current .hdy-command", _executeCommand);

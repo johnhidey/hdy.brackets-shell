@@ -29,6 +29,15 @@
     font-size: inherit;
 }
 
+.hdy-input {
+    border-width: 0;
+    border-style: none;
+    border-color: transparent;
+    margin: 2px 0;
+    font-family: inherit;
+    font-size: inherit;
+}
+
 .hdy-command-result {
     margin: 2px 0;
 }
@@ -37,7 +46,7 @@
     content: attr(data-cwd);
 }
 
-div:focus {
+div:focus, span:focus {
     outline: 0;
     border-width: 0;
     border-style: none;

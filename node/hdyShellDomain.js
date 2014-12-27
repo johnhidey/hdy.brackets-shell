@@ -5,6 +5,7 @@
 
     var _domainManager,
         child,
+        tty = require("tty"),
         kill = require("tree-kill");
 
     /**
@@ -54,6 +55,7 @@
         }
 
         child = spawn(cmd, args, { cwd: cwd, env: process.env });
+        child.stdin.setRawMode(true);
 
         child.stdout.on("data", function (data) {
             _domainManager.emitEvent("hdyShellDomain", "stdout", [data.toString()]);
@@ -68,6 +70,10 @@
             _domainManager.emitEvent("hdyShellDomain", "close", [enddir]);
         });
 
+    }
+
+    function _writeInput(data) {
+        child.stdin.write(data);
     }
 
     function _kill() {
@@ -139,6 +145,19 @@
                 name: "shell",
                 type: "string",
                 description: "Path of the Shell used to execute the commands"
+            }]
+        );
+
+        domainManager.registerCommand(
+            "hdyShellDomain", // domain name
+            "writeInput", // command name
+            _writeInput, // command handler function
+            true, // isAsync
+            "Send user input into STDIN",
+            [{
+                name: "data",
+                type: "string",
+                description: "The supplied user input"
             }]
         );
 
