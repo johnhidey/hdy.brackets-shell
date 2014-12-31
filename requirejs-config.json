@@ -1,0 +1,20 @@
+{
+    "baseUrl": ".",
+    "paths": {
+
+        "application":          "modules/application",
+        "panel":                "modules/panel",
+        "menuItem":             "modules/menuItem",
+        "extensionBarButton":   "modules/extensionBarButton",
+        "exception":            "modules/exception",
+        "strings":              "strings",
+
+        "commandId":            "modules/commandId",
+        "panelState":           "modules/panelState",
+
+        "online":               "vendor/online",
+
+        "shellTemplate":        "templates/panel.html"
+
+    }
+}

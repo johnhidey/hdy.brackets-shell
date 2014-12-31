@@ -5,18 +5,12 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var self;
+    var Exception = function(message) {
 
-    var Command = function(cmd, cwd, shell) {
-
-        self = this;
-
-        self.cmd    = cmd;
-        self.cwd    = cwd;
-        self.shell  = shell;
+        this.message = "hdyException: " + message;
 
     };
 
-    module.exports = Command;
+    module.exports = Exception;
 
 });

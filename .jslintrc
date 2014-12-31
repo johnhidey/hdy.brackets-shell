@@ -1,0 +1,14 @@
+{
+    "node": true,
+    "nomen": true,
+    "regexp": true,
+    "todo": true,
+    "vars": true,
+    "unparam": true,
+    "globals": {
+        "$": true,
+        "document": true,
+        "brackets": true,
+        "define": true
+    }
+}

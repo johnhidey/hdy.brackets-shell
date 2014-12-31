@@ -73,14 +73,6 @@ div:focus {
     border-color: transparent;
 }
 
-.hdy-shell-icon-off {
-    background: url(../images/hdy.brackets.shell.toolbar.png);
-}
-
-.hdy-shell-icon-on {
-    background: url(../images/hdy.brackets.shell.toolbar.on.png);
-}
-
 .hdy-dark-theme {
     color:#AAAAAA;
 }
