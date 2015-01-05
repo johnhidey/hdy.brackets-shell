@@ -1,18 +1,22 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true,
          indent: 4, maxerr: 50 */
-/*global define, $, brackets */
+/*global define, $, brackets, Mustache */
 
 define(function (require, exports, module) {
     "use strict";
 
     var WorkspaceManager        = brackets.getModule("view/WorkspaceManager"),
+        ExtensionUtils          = brackets.getModule("utils/ExtensionUtils"),
 
         PanelState              = require("panelState");
 
-    function Panel(id, panelTemplate, state) {
+
+    ExtensionUtils.loadStyleSheet(module, "../styles/panel.less");
+
+    function Panel(id, title, panelTemplate, state) {
 
         var self = this,
-            _stateChangedObservers = {},
+            _observers = {},
             _panel;
 
         if (!state) {
@@ -21,15 +25,49 @@ define(function (require, exports, module) {
 
         self.id = id;
         self.state = state;
+        self.title = title;
+        self.controls = [];
 
-        self.registerForStateChangeNotification = function(observer) {
+        self.draw = function() {
 
-            _stateChangedObservers[observer.id] = observer;
+            require(["text!" + panelTemplate], function(templateHtml) {
+
+                var compiledTemplate = Mustache.render(templateHtml, self),
+                    control;
+
+                _panel = WorkspaceManager.createBottomPanel(id,
+                                                            $(compiledTemplate),
+                                                            100);
+
+                if (_panel) {
+                    _panel.setVisible(state === PanelState.Open);
+
+                    $(".close", _panel.$panel).on('click', function() {
+                        self.setState(PanelState.Closed);
+                    });
+                }
+
+                for (var controlIndex in self.controls) {
+                    control = self.controls[controlIndex];
+
+                    if (control && control.draw) {
+                        control.draw();
+                    }
+                }
+
+            });
+
+        };
+
+        self.register = function(observer) {
+
+            _observers[observer.id] = observer;
             observer.panel = {
                 'setState': self.setState
             };
 
             observer.setState(self.state);
+
         };
 
         self.setState = function(state) {
@@ -38,28 +76,14 @@ define(function (require, exports, module) {
                 _panel.setVisible(state === PanelState.Open);
             }
 
-            for (var subscriber in _stateChangedObservers) {
-                _stateChangedObservers[subscriber].setState(state);
+            for (var subscriber in _observers) {
+                _observers[subscriber].setState(state);
             }
 
         };
 
-        if (state) {
-            self.setState(state);
-        }
+        self.setState(state);
 
-        require(["text!" + panelTemplate], function(templateHtml) {
-            _panel = WorkspaceManager.createBottomPanel(id,
-                                                              $(templateHtml),
-                                                              100);
-
-            _panel.setVisible(state === PanelState.Open);
-
-            $(".close", _panel.$panel).on('click', function() {
-                self.setState(PanelState.Closed);
-            });
-
-        });
     }
 
     module.exports = Panel;

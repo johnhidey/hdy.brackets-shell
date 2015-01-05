@@ -5,33 +5,17 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var self,
-        Shell = require("shell");
+    var Tab = function(name, tabTemplate) {
 
-    function _rename(name) {
+        var self = this;
 
-        self.name = name;
-
-    }
-
-    function _initialize() {
-
-        self.shell = new Shell();
-    }
-
-    var Tab = function(name, options) {
-
-        var self    = this,
-            Shell = require("shell");
-
-        self.shell   = new Shell();
         self.name       = name;
 
-        _initialize();
+        self.rename = function(name) {
+            self.name = name;
+        };
 
     };
-
-    Tab.prototype.rename          = _rename;
 
     module.exports = Tab;
 

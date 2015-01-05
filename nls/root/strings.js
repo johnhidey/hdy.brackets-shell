@@ -3,6 +3,8 @@
 
 define({
 
+    APPLICATION_TITLE:                      "Brackets Shell",
+
     EXCEPTION_PANEL_INITIALIZED:            "Panel init method should only be called once",
 
     MENU_VIEW_SHELL:                        "Brackets Shell",

@@ -10,8 +10,7 @@ define(function (require, exports, module) {
         Application         = require("application"),
         OnlineUsers         = require("online");
 
-        ExtensionUtils.loadStyleSheet(module, "styles/shellPanel.css");
-        ExtensionUtils.loadStyleSheet(module, "styles/shellPanel.less");
+        ExtensionUtils.loadStyleSheet(module, "styles/bracketsShell.less");
 
     Application.boot();
 

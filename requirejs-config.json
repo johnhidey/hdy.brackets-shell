@@ -8,13 +8,16 @@
         "extensionBarButton":   "modules/extensionBarButton",
         "exception":            "modules/exception",
         "strings":              "strings",
+        "tabs":                 "modules/tabs",
+        "tab":                  "modules/tab",
 
         "commandId":            "modules/commandId",
         "panelState":           "modules/panelState",
 
         "online":               "vendor/online",
 
-        "shellTemplate":        "templates/panel.html"
+        "shellTemplate":        "templates/panel.html",
+        "tabsTemplate":         "templates/tabs.html"
 
     }
 }
