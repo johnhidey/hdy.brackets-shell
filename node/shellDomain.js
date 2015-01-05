@@ -23,8 +23,7 @@
             text    = cmd.cmd,
             args    = cmd.cmd ? "/c" : "-c",
             shell   = cmd.shell ? "cmd.exe" : cmd.shell,
-            isWin   = !cmd.shell || cmd.shell.trim().toLowerCase() === "cmd.exe",
-            env     = process.env;
+            isWin   = !cmd.shell || cmd.shell.trim().toLowerCase() === "cmd.exe";
 
         // Are we changing directories?  If so we need
         // to handle that in a special way.
@@ -47,7 +46,16 @@
             _domainManager.emitEvent("hdyShellDomain", "clear");
         }
 
-        child = spawn(shell, [args, text], { cwd: dir, env: env, stdio: 'inherit' });
+        if (isWin) {
+            args = ["/c", cmd];
+            cmd = shell;
+        }
+        else {
+            args = ["-c", cmd];
+            cmd = shell;
+        }
+
+        child = spawn(cmd, args, { cwd: dir, env: process.env });
 
         process.stdout.on("data", function (data) {
             var parsedOutput = ansi.parse(data.toString().trim());
@@ -61,7 +69,7 @@
             _domainManager.emitEvent("hdyShellDomain", "stderr", [parsedOutput]);
         });
 
-        process.on("close", function () {
+        child.on("close", function () {
             child.kill();
             _domainManager.emitEvent("hdyShellDomain", "close", [dir]);
         });
