@@ -35,7 +35,7 @@ define(function (require, exports, module) {
                 var compiledTemplate = Mustache.render(templateHtml, self),
                     control;
 
-                _panel = WorkspaceManager.createBottomPanel(id,
+                _panel = WorkspaceManager.createBottomPanel(self.id,
                                                             $(compiledTemplate),
                                                             100);
 
@@ -45,18 +45,18 @@ define(function (require, exports, module) {
                     $(".hdy-brackets-shell-panel .close").on("click", function() {
                         self.setState(PanelState.Closed);
                     });
+
                 }
 
-                for (var controlIndex in self.controls) {
-                    control = self.controls[controlIndex];
-
-                    if (control && control.draw) {
-                        control.draw();
-                    }
-                }
+//                for (var controlIndex in self.controls) {
+//                    control = self.controls[controlIndex];
+//
+//                    if (control && control.draw) {
+//                        control.draw();
+//                    }
+//                }
 
             });
-
         };
 
         self.register = function(observer) {
