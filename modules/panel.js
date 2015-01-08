@@ -48,13 +48,13 @@ define(function (require, exports, module) {
 
                 }
 
-//                for (var controlIndex in self.controls) {
-//                    control = self.controls[controlIndex];
-//
-//                    if (control && control.draw) {
-//                        control.draw();
-//                    }
-//                }
+                for (var controlIndex in self.controls) {
+                    control = self.controls[controlIndex];
+
+                    if (control && control.draw) {
+                        control.draw();
+                    }
+                }
 
             });
         };
