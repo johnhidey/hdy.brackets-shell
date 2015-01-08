@@ -11,6 +11,7 @@ define(function (require, exports, module) {
 
 
     ExtensionUtils.loadStyleSheet(module, "../styles/tabs.less");
+    require("droptabs");
 
     function Tabs(id, tabsTemplate) {
 
@@ -44,6 +45,8 @@ define(function (require, exports, module) {
 
         self.draw = function() {
 
+            var control;
+
             require(["text!" + tabsTemplate], function(templateHtml) {
 
                 var compiledTemplate    = Mustache.render(templateHtml, self),
@@ -55,10 +58,21 @@ define(function (require, exports, module) {
                 $title.remove();
                 $close.remove();
 
-                $compiledTemplate.find(".span9").prepend($title);
-                $compiledTemplate.append($close);
+//                $compiledTemplate.find(".span9").prepend($title);
 
                 $toolbar.append($compiledTemplate);
+                $compiledTemplate.append($close);
+
+                $("#hdy-brackets-shell-panel .droptabs").droptabs();
+
+                for (var controlIndex in self.controls) {
+                    control = self.controls[controlIndex];
+
+                    if (control && control.draw) {
+                        control.draw();
+                    }
+                }
+
             });
 
         };

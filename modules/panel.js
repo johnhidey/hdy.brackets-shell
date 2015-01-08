@@ -42,7 +42,7 @@ define(function (require, exports, module) {
                 if (_panel) {
                     _panel.setVisible(state === PanelState.Open);
 
-                    $(".close", _panel.$panel).on('click', function() {
+                    $(".hdy-brackets-shell-panel .close").on("click", function() {
                         self.setState(PanelState.Closed);
                     });
                 }
