@@ -15,6 +15,10 @@
     background: transparent;
 }
 
+.dark .hdy-command-result pre {
+    color: #AAAAAA;
+}
+
 .hdy-error {
     color: #ff0000;
     color: rgba(255, 0, 0, 0.6);
@@ -45,15 +49,11 @@ div:focus {
 }
 
 .hdy-shell-icon-off {
-    background: url(../images/hdy.brackets.shell.toolbar.png);
+    background: url(../images/hdy.brackets.shell.toolbar.svg) no-repeat center;
 }
 
 .hdy-shell-icon-on {
-    background: url(../images/hdy.brackets.shell.toolbar.on.png);
-}
-
-.hdy-dark-theme {
-    color:#AAAAAA;
+    background: url(../images/hdy.brackets.shell.toolbar.on.svg) no-repeat center;
 }
 
 .hdy-red {

@@ -176,10 +176,6 @@ define(function (require, exports, module) {
             currentCommandResult.append($("<pre>"));
         }
 
-        if (_preferences.get("dark")) {
-            $("pre", currentCommandResult).addClass('hdy-dark-theme');
-        }
-
         if(ansiFormat.hasAceptedAnsiFormat(data)){
             ansiFormat.formattedText(data, currentCommandResult);
         } else {
