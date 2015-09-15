@@ -6,6 +6,10 @@ define(function (require, exports, module) {
     "use strict";
 
     var AppInit            = brackets.getModule("utils/AppInit"),
+		HDY_TOGGLE_SHELL = "hdy.toggle.shell",
+        hdyToggleShell = "Alt-Ctrl-/",
+		KeyBindingManager = brackets.getModule("command/KeyBindingManager"),
+        CommandManager = brackets.getModule("command/CommandManager"),
         ExtensionUtils     = brackets.getModule("utils/ExtensionUtils"),
         ProjectManager     = brackets.getModule("project/ProjectManager"),
         PreferencesManager = brackets.getModule("preferences/PreferencesManager"),
@@ -50,6 +54,10 @@ define(function (require, exports, module) {
         $icon.on("click", commandShell.toggle);
 
         commandShell.hide();
+		
+		CommandManager.register("open and close command", HDY_TOGGLE_SHELL, toggleShell)
+        KeyBindingManager.addBinding(HDY_TOGGLE_SHELL, hdyToggleShell);
+		
         commandShell.setDirectory(projectWatcher.cleanPath(ProjectManager.getProjectRoot().fullPath));
 
         if (Preferences.get("trackProject")) {
@@ -61,6 +69,10 @@ define(function (require, exports, module) {
         }
 
         projectWatcher.watch();
+		
+		 function toggleShell() {
+            commandShell.toggle();
+        }
 
     });
 
