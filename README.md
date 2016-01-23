@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/johnhidey/hdy.brackets-shell.png?label=ready&title=Ready)](https://waffle.io/johnhidey/hdy.brackets-shell)
 hdy.Brackets-Shell
 ==================
 A brackets extension giving you access to the system shell within brackets.
