@@ -1,3 +1,5 @@
+# **  This repository is no longer maintained. **
+
 hdy.Brackets-Shell
 ==================
 A brackets extension giving you access to the system shell within brackets.
