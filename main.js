@@ -14,14 +14,6 @@ define(function (require, exports, module) {
                                 .attr("title", "Shell")
                                 .appendTo($("#main-toolbar .buttons"));
 
-
-    // Default theme if not defined
-    if(Preferences.get("dark") === undefined) {
-        Preferences.definePreference("dark", "boolean", false);
-        Preferences.set("dark", false);
-        Preferences.save();
-    }
-
     // Default projectTracking if not defined
     if(Preferences.get("trackProject") === undefined) {
         Preferences.definePreference("trackProject", "boolean", true);
