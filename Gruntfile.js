@@ -30,6 +30,13 @@ module.exports = function(grunt) {
                         src: ["**/*"],
                         dest: "node/node_modules/tree-kill/",
                         filter: "isFile"
+                    },
+                    {
+                        expand: true,
+                        cwd: "node_modules/ansi-webkit/",
+                        src: ["**/*"],
+                        dest: "node/node_modules/ansi-webkit/",
+                        filter: "isFile"
                     }
                 ]
             }

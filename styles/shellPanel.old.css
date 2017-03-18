@@ -2,8 +2,25 @@
     margin-right: 20px;
 }
 
+.hdy-command-group:nth-of-type(1) {
+    margin-top: 10px;
+}
+
+.hdy-current:nth-last-of-type(1) {
+    margin-bottom: 30px;
+}
+
+.hdy-brackets-shell-panel-title {
+    margin-right: 20px;
+    display: inline-block;
+}
+
+.hdy-shell-tabs {
+    display: inline-block;
+}
+
 .hdy-command-groups {
-    height: calc(100% - 37px);
+    height: calc(100% - 41px);
     margin-left: 5px;
     overflow: auto;
 }
@@ -42,14 +59,6 @@ div:focus {
     border-width: 0;
     border-style: none;
     border-color: transparent;
-}
-
-.hdy-shell-icon-off {
-    background: url(../images/hdy.brackets.shell.toolbar.png);
-}
-
-.hdy-shell-icon-on {
-    background: url(../images/hdy.brackets.shell.toolbar.on.png);
 }
 
 .hdy-dark-theme {

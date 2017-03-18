@@ -6,27 +6,53 @@ define(function (require, exports, module) {
     "use strict";
 
     var WorkspaceManager       = brackets.getModule("view/WorkspaceManager"),
+        Shell                   = require("shell"),
         AppInit            = brackets.getModule("utils/AppInit"),
         KeyEvent            = brackets.getModule("utils/KeyEvent"),
         _shellPanelHtml      = require("text!templates/shellPanel.html"),
         $commandTemplateHtml = $(require("text!templates/commandTemplate.html")),
-        ShellPanel          = WorkspaceManager.createBottomPanel("hdy.brackets.shell.panel",
+        ShellPanelBottom     = WorkspaceManager.createBottomPanel("hdy.brackets.shell.panel",
                                                             $(_shellPanelHtml), 100),
         ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
         NodeDomain          = brackets.getModule("utils/NodeDomain"),
         ShellDomain         = new NodeDomain("hdyShellDomain",
                                      ExtensionUtils.getModulePath(module,
-                                                    "node/hdyShellDomain")),
+                                                    "../node/shellDomain")),
         CommandRoll         = [],
         CommandRollIndex    = -1,
         KillProcess         = $('.hdy-brackets-shell-kill'),
-        ansiFormat          = require("shellAnsiFormat"),
         _preferencesManager = brackets.getModule("preferences/PreferencesManager"),
         _preferences        = _preferencesManager.getExtensionPrefs("hdy.brackets-shell"),
         PROMPT_TERMINATOR   = ">";
 
+    function ShellPanelView(title, cwd) {
+
+        this.watch('title', function(prop, oldValue, newValue) {
+
+            return newValue;
+        });
+
+        this.watch('cwd', function(prop, oldValue, newValue) {
+            _addShellLine(newValue);
+
+            return newValue;
+        });
+
+        this.shell = new Shell();
+
+        this.shell.kill();
+
+        this.title = title;
+        this.cwd = cwd;
+    }
+
+    ShellPanelView.prototype.toggle = _toggle;
+    ShellPanelView.prototype.show = _show;
+    ShellPanelView.prototype.hide = _hide;
+    ShellPanelView.prototype.isVisible = _isVisible;
+
     function _toggle() {
-        if (ShellPanel.isVisible()) {
+        if (ShellPanelBottom.isVisible()) {
             _hide();
         }
         else {
@@ -35,7 +61,7 @@ define(function (require, exports, module) {
     }
 
     function _show() {
-        ShellPanel.show();
+        ShellPanelBottom.show();
         $("a.hdy-shell-icon").removeClass("hdy-shell-icon-off");
         $("a.hdy-shell-icon").addClass("hdy-shell-icon-on");
         _focus();
@@ -44,11 +70,11 @@ define(function (require, exports, module) {
     function _hide() {
         $("a.hdy-shell-icon").removeClass("hdy-shell-icon-on");
         $("a.hdy-shell-icon").addClass("hdy-shell-icon-off");
-        ShellPanel.hide();
+        ShellPanelBottom.hide();
     }
 
     function _isVisible() {
-        return ShellPanel.isVisible();
+        return ShellPanelBottom.isVisible();
     }
 
     function _executeCommand(e) {
@@ -148,7 +174,6 @@ define(function (require, exports, module) {
         _clearOutput();
     });
 
-
     function _clearOutput() {
 
         var commandGroups = $(".hdy-command-groups"),
@@ -180,16 +205,16 @@ define(function (require, exports, module) {
             $("pre", currentCommandResult).addClass('hdy-dark-theme');
         }
 
-        if(ansiFormat.hasAceptedAnsiFormat(data)){
-            ansiFormat.formattedText(data, currentCommandResult);
-        } else {
-            for (var i = 0; i < data.length; i++) {
-                if (data.charCodeAt(i) === 65533) {
-                    data = replaceCharAtIndex(data, i, ".");
-                }
-            }
+//        if(ansiFormat.hasAceptedAnsiFormat(data)){
+//            ansiFormat.formattedText(data, currentCommandResult);
+//        } else {
+//            for (var i = 0; i < data.length; i++) {
+//                if (data.charCodeAt(i) === 65533) {
+//                    data = replaceCharAtIndex(data, i, ".");
+//                }
+//            }
             $("pre", currentCommandResult).append(document.createTextNode(data));
-        }
+//        }
 
         _scrollToBottom();
     }
@@ -205,10 +230,10 @@ define(function (require, exports, module) {
             currentCommandGroup.removeClass("hdy-current");
         }
 
-        var element = $(".scrollPoint", currentCommandGroup);
-        if (element.length) {
-            currentCommandGroup[0].removeChild(element[0]);
-        }
+//        var element = $(".hdy-command-result:nth-last-of-type(1)", currentCommandGroup);
+//        if (element.length) {
+//            currentCommandGroup[0].removeChild(element[0]);
+//        }
         newCommand.attr("data-cwd", cwd + PROMPT_TERMINATOR);
         commandGroups.append(newCommandGroup);
 
@@ -226,22 +251,20 @@ define(function (require, exports, module) {
     function _focus() {
 
         var commandInput = $(".hdy-current .hdy-command")[0];
-        var scrollPoint = $(".scrollPoint")[0];
 
-        if (scrollPoint) {
-            scrollPoint.scrollIntoView(false);
-            commandInput.focus();
-        }
+        commandInput.focus();
+        commandInput.scrollIntoView(false);
+
     }
 
-    // Initialize the shellPanel
+    // Initialize the ShellPanelBottom
     AppInit.appReady(function () {
 
         KillProcess.click(function() {
             ShellDomain.exec("kill");
         });
         KillProcess.attr('disabled', 'disabled');
-        $(".close", ShellPanel.$panel).click(_toggle);
+        $(".close", ShellPanelBottom.$panel).click(_toggle);
 //        $(".hdy-command-groups .hdy-current .hdy-command")
 //            .attr("data-cwd", cwd);
 
@@ -278,9 +301,11 @@ define(function (require, exports, module) {
         _addShellLine(cwd);
     }
 
-    exports.toggle = _toggle;
-    exports.hide = _hide;
-    exports.show = _show;
-    exports.isVisible = _isVisible;
-    exports.setDirectory = _setDirectory;
+    module.exports = ShellPanelView;
+
+//    exports.toggle = _toggle;
+//    exports.hide = _hide;
+//    exports.show = _show;
+//    exports.isVisible = _isVisible;
+//    exports.setDirectory = _setDirectory;
 });

@@ -1,0 +1,20 @@
+<svg width="24"
+     height="48"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:svg="http://www.w3.org/2000/svg">
+
+    <title>Brackets Shell Icon</title>
+    <g>
+        <g id="closed">
+            <path d="M12 12 L10 14 L4 6 A1,1 0 0,1 6 4 Z" fill="#bbbbbb" stroke-width="1" />
+            <path d="M12 12 L10 10 L4 18 A1,1 0 0,0 6 20 Z" fill="#bbbbbb" stroke-width="1"/>
+            <rect x="12" y="18" width="10" height="3" rx="1" ry="4" fill="#bbbbbb" stroke-width="1" />
+        </g>
+        <g id="open">
+            <path d="M12 36 L10 38 L4 30 A1,1 0 0,1 6 28 Z" fill="#94cd47" stroke-width="1" />
+            <path d="M12 36 L10 34 L4 42 A1,1 0 0,0 6 44 Z"  fill="#94cd47" stroke-width="1"/>
+            <rect x="12" y="42" width="10" height="3" rx="1" ry="4" fill="#94cd47" stroke-width="1" />
+        </g>
+    </g>
+
+</svg>

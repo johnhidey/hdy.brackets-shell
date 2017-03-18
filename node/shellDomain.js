@@ -3,9 +3,11 @@
 (function() {
     "use strict";
 
+
     var _domainManager,
         child,
-        kill = require("tree-kill");
+        kill = require("tree-kill"),
+        ansi = require("ansi-webkit");
 
     /**
     * @private
@@ -14,32 +16,32 @@
                        if false, return free memory only.
     * @return {number} The amount of memory.
     */
-    function _execute(cmd, cwd, isWin, shell) {
+    function _execute(cmd) {
 
-        var spawn = require("child_process").spawn,
-            args,
-            enddir = cwd,
-            tempdir;
-
-        cmd = cmd.trim();
+        var spawn   = require("child_process").spawn,
+            dir     = cmd.cwd,
+            text    = cmd.cmd,
+            args    = cmd.cmd ? "/c" : "-c",
+            shell   = cmd.shell ? "cmd.exe" : cmd.shell,
+            isWin   = !cmd.shell || cmd.shell.trim().toLowerCase() === "cmd.exe";
 
         // Are we changing directories?  If so we need
         // to handle that in a special way.
-        if (cmd.slice(0, 3).toLowerCase() === "cd ") {
+        // TODO: Might need to change this.
+        if (text.slice(0, 3).toLowerCase() === "cd ") {
 
             try {
-                process.chdir(cwd);
-                tempdir = cmd.substring(2).trim();
-                process.chdir(tempdir);
-                enddir = process.cwd();
+                process.chdir(dir);
+                process.chdir(text.substring(2).trim());
+                dir = process.cwd();
             }
             catch (e) {}
 
         }
 
         // clearing the console with clear or clr?
-        if ((cmd.toLowerCase() === "clear" && !isWin) ||
-            (cmd.toLowerCase() === "cls" && isWin)) {
+        if ((text.toLowerCase() === "clear" && !isWin) ||
+            (text.toLowerCase() === "cls" && isWin)) {
 
             _domainManager.emitEvent("hdyShellDomain", "clear");
         }
@@ -53,19 +55,23 @@
             cmd = shell;
         }
 
-        child = spawn(cmd, args, { cwd: cwd, env: process.env });
+        child = spawn(cmd, args, { cwd: dir, env: process.env });
 
-        child.stdout.on("data", function (data) {
-            _domainManager.emitEvent("hdyShellDomain", "stdout", [data.toString()]);
+        process.stdout.on("data", function (data) {
+            var parsedOutput = ansi.parse(data.toString().trim());
+
+            _domainManager.emitEvent("hdyShellDomain", "stdout", [parsedOutput]);
         });
 
-        child.stderr.on("data", function (data) {
-            _domainManager.emitEvent("hdyShellDomain", "stderr", [data.toString()]);
+        process.stderr.on("data", function (data) {
+            var parsedOutput = ansi.parse(data.toString().trim());
+
+            _domainManager.emitEvent("hdyShellDomain", "stderr", [parsedOutput]);
         });
 
         child.on("close", function () {
             child.kill();
-            _domainManager.emitEvent("hdyShellDomain", "close", [enddir]);
+            _domainManager.emitEvent("hdyShellDomain", "close", [dir]);
         });
 
     }
