@@ -33,6 +33,8 @@ define(function (require, exports, module) {
         Preferences.definePreference("shell", "string", "cmd.exe");
         if (brackets.platform === "win") {
             Preferences.set("shell", "cmd.exe");
+        } else if (brackets.platform === "mac") {
+            Preferences.set("shell", "/bin/bash");
         } else {
             Preferences.set("shell", "/bin/sh");
         }

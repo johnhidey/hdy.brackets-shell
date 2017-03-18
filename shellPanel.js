@@ -69,7 +69,7 @@ define(function (require, exports, module) {
                 ShellDomain.exec("execute",
                                  currentCommand.text(),
                                  cwd,
-                                 brackets.platform === "win",
+                                 brackets.platform,
                                  _preferences.get("shell"));
 
                 CommandRoll.push(currentCommand.text());

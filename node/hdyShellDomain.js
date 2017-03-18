@@ -14,7 +14,7 @@
                        if false, return free memory only.
     * @return {number} The amount of memory.
     */
-    function _execute(cmd, cwd, isWin, shell) {
+    function _execute(cmd, cwd, platform, shell) {
 
         var spawn = require("child_process").spawn,
             args,
@@ -36,6 +36,9 @@
             catch (e) {}
 
         }
+        
+        var isWin = (platform === "win");
+        var isMac = (platform === "mac");
 
         // clearing the console with clear or clr?
         if ((cmd.toLowerCase() === "clear" && !isWin) ||
@@ -49,7 +52,14 @@
             cmd = shell;
         }
         else {
-            args = ["-c", cmd];
+            if (!isMac) {
+                args = ["-c", cmd];
+            }
+            else {
+                var macEnvironment = "for i in $(defaults read $HOME/.MacOSX/environment | sed -nE 's/^(.+)= (.+\");/\\1/p' | sed -nE 's/^[ \\t]*//p'); do eval export $i=$(defaults read $HOME/.MacOSX/environment $i); done"
+                args = ["-c", macEnvironment + ";" + cmd];
+            }
+            
             cmd = shell;
         }
 
